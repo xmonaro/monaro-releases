@@ -1,0 +1,8 @@
+{
+  "version": "0.9.8.1",
+  "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
+  "notes": "Delta: hear only what Surface changes (I/O drawer), level-matched with Auto Gain\nManual: redesigned, Delta documented",
+  "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.1-beta/Surface-Beta_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.1-beta/Surface-Beta_Installer.exe"
+}

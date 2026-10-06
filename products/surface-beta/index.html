@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surface beta releases</title>
+<meta name="robots" content="noindex">
+<style>
+/* Surface's visual language, Graphite theme (docs/ui/style-guide.md): matte graphite chassis, a darker
+   window tone, engraved dividers (dark seam + lit line), Archivo. Structure of a product document, not a
+   web app: a label column and a content column, rules instead of containers, no cards, no pills. */
+@font-face { font-family: "Archivo"; src: url("../../fonts/Archivo-Regular.ttf"); font-weight: 400; }
+@font-face { font-family: "Archivo Wide"; src: url("../../fonts/Archivo-SemiExpandedMedium.ttf"); font-weight: 500; }
+@font-face { font-family: "Archivo Mark"; src: url("../../fonts/Archivo-ExpandedMedium.ttf"); font-weight: 500; }
+:root { /* Chalk, the plugin's light theme: the default here */
+  color-scheme: light dark;
+  --chassis: #e2e4e6; --strip: #eceef0; --raised: #f5f6f7; --raised-hover: #fafbfc; --pressed: #e6e8ea;
+  --seam: #bcc0c5; --lit: rgba(250,251,252,0.85); --hair: rgba(27,29,32,0.10); --bay: rgba(27,29,32,0.12);
+  --edge: rgba(27,29,32,0.20); --sheen: rgba(250,251,252,0.9);
+  --text: #1b1d20; --dim: #4f5359; --faint: #868a90;
+}
+@media (prefers-color-scheme: dark) { :root { /* Graphite, the plugin's dark theme */
+  --chassis: #232527; --strip: #1d1f21; --raised: #323438; --raised-hover: #3a3c40; --pressed: #2b2d30;
+  --seam: #151618; --lit: rgba(255,255,255,0.06); --hair: rgba(255,255,255,0.07); --bay: rgba(255,255,255,0.07);
+  --edge: #151618; --sheen: rgba(255,255,255,0.07);
+  --text: #e8eaec; --dim: #a4a8ad; --faint: #73777c;
+} }
+* { box-sizing: border-box; }
+html { background: var(--chassis); }
+body { margin: 0; color: var(--text); font: 15px/1.55 "Archivo", -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.page { max-width: 920px; margin: 0 auto; padding: 40px 28px 28px; }
+
+/* Engraved divider: the plugin's seam with a lit line under it */
+.rule { height: 2px; border-top: 1px solid var(--seam); border-bottom: 1px solid var(--lit); }
+.label { font: 500 10.5px/1.3 "Archivo Wide"; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
+.grid { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 32px; }
+
+/* Identity */
+.identity { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 18px; }
+.wordmark { font: 500 24px "Archivo Mark"; letter-spacing: 0.27em; }
+.maker { font-size: 13px; color: var(--faint); margin-left: 4px; letter-spacing: 0.03em; }
+.context { font-size: 13px; color: var(--dim); }
+
+/* Current release: a product sheet */
+.current { padding: 36px 0 34px; }
+.current .meta { padding-top: 10px; }
+.current .meta div + div { margin-top: 14px; }
+.current .meta span:not(.label) { display: block; font-size: 14px; color: var(--dim); margin-top: 3px; }
+.release { font: 500 46px/1 "Archivo Wide"; letter-spacing: -0.005em; }
+.release small { font: 400 17px "Archivo"; color: var(--faint); margin-left: 8px; letter-spacing: 0; }
+.whatsnew { margin-top: 26px; }
+.whatsnew ul { margin: 10px 0 0; padding: 0; list-style: none; }
+.whatsnew li { padding: 9px 0; border-top: 1px solid var(--hair); font-size: 16px; color: var(--dim); }
+.whatsnew li:last-child { border-bottom: 1px solid var(--hair); }
+.whatsnew li b, .entry li b { font-weight: 400; color: var(--text); }
+
+/* Downloads: one strip of three equal bays, like channels of the chain */
+.downloads { padding: 30px 0 34px; }
+.strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--strip); border-top: 1px solid var(--seam); border-bottom: 1px solid var(--lit); }
+.bay { padding: 16px 18px 18px; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.bay + .bay { border-left: 1px solid var(--bay); }
+.bay .name { display: flex; align-items: center; gap: 9px; font: 500 15px "Archivo Wide"; }
+.icon { width: 16px; height: 16px; display: block; fill: var(--text); flex: none; }
+.control { display: inline-flex; align-items: center; height: 28px; padding: 0 14px; flex: none;
+           background: var(--raised); color: var(--text); text-decoration: none; border-radius: 3px; border: 1px solid var(--edge);
+           box-shadow: inset 0 1px 0 var(--sheen); font: 500 10.5px "Archivo Wide"; letter-spacing: 0.12em; text-transform: uppercase; }
+.control:hover { background: var(--raised-hover); }
+.control:active { background: var(--pressed); box-shadow: inset 0 1px 2px rgba(0,0,0,0.18); }
+.footnote { margin: 10px 0 0; font-size: 12.5px; color: var(--faint); }
+
+/* Earlier betas: a release history, quieter than the current one */
+.history { padding: 30px 0 10px; }
+.history-head { margin-bottom: 12px; }
+.entry { display: grid; grid-template-columns: 180px 1fr; column-gap: 32px; padding: 16px 0; border-top: 1px solid var(--hair); }
+.entry:last-child { border-bottom: 1px solid var(--hair); }
+.entry .v { font: 500 15px "Archivo Wide"; color: var(--dim); }
+.entry .d { display: block; font-size: 13px; color: var(--faint); margin-top: 2px; }
+.entry ul { margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--dim); }
+.entry li + li { margin-top: 4px; }
+
+footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; color: var(--faint); }
+
+@media (max-width: 760px) {
+  .page { padding: 26px 16px 20px; }
+  .grid, .entry { grid-template-columns: 1fr; row-gap: 10px; }
+  .current .meta { display: flex; gap: 28px; padding-top: 0; }
+  .current .meta div + div { margin-top: 0; }
+  .release { font-size: 38px; }
+  .strip { grid-template-columns: 1fr; }
+  .bay + .bay { border-left: 0; border-top: 1px solid var(--bay); }
+  .bay { flex-direction: row; align-items: center; justify-content: space-between; padding: 14px 16px 14px 18px; }
+  .wordmark { font-size: 19px; }
+  .identity { flex-direction: column; gap: 6px; }
+  footer { flex-direction: column; gap: 4px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="identity">
+    <div><span class="wordmark">SURFACE</span><span class="maker">by MONARO</span></div>
+    <span class="context">Beta releases</span>
+  </div>
+  <div class="rule"></div>
+
+  <section class="current grid">
+    <div class="meta">
+      <div><span class="label">Current beta</span><span>6 October 2026</span></div>
+    </div>
+    <div>
+      <div class="release">0.9.8.1<small>beta</small></div>
+      <div class="whatsnew">
+        <span class="label">What's new</span>
+        <ul>
+          <li><b>Delta:</b> hear only what Surface changes (I/O drawer), level-matched with Auto Gain</li>
+          <li><b>Manual:</b> redesigned, Delta documented</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+  <section class="downloads grid">
+    <div><span class="label">Download</span></div>
+    <div>
+    <div class="strip">
+      <div class="bay">
+        <div class="name"><svg class="icon" viewBox="0.6 0.6 14.8 14.8" aria-hidden="true"><path d="M11.2 8.4c0-1.6 1.3-2.4 1.4-2.4-.8-1.1-2-1.3-2.4-1.3-1-.1-2 .6-2.5.6s-1.3-.6-2.2-.6C4.4 4.7 3.3 5.4 2.7 6.5c-1.2 2.1-.3 5.2.9 6.9.6.8 1.2 1.7 2.1 1.7.8 0 1.2-.5 2.2-.5s1.3.5 2.2.5c.9 0 1.5-.9 2-1.7.6-.9.9-1.8.9-1.9 0 0-1.8-.7-1.8-3.1zM9.6 3.6c.5-.6.8-1.4.7-2.2-.7 0-1.5.5-2 1.1-.4.5-.8 1.3-.7 2.1.8.1 1.5-.4 2-1z"/></svg>macOS</div>
+        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.1-beta/Surface-Beta_Installer.pkg">Download</a>
+      </div>
+      <div class="bay">
+        <div class="name"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h4.4v4.4H3zM8.6 3H13v4.4H8.6zM3 8.6h4.4V13H3zM8.6 8.6H13V13H8.6z"/></svg>Windows</div>
+        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.1-beta/Surface-Beta_Installer.exe">Download</a>
+      </div>
+      <div class="bay">
+        <div class="name"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M3.8 2h5.7l3 3v9h-8.7zM5.6 7.6h4.8v1.1H5.6zm0 2.4h4.8v1.1H5.6z"/></svg>Manual</div>
+        <a class="control" href="../surface/Surface-Manual.pdf">Open</a>
+      </div>
+    </div>
+    <p class="footnote">The macOS installer adds the VST3 and Audio Unit plugins, the Windows installer the VST3 plugin (64-bit).</p>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+  <section class="history">
+    <div class="grid history-head"><span class="label">Earlier betas</span><span></span></div>
+    <div class="entry">
+      <div><span class="v">0.9.8 beta</span><span class="d">6 October 2026</span></div>
+      <ul>
+        <li><b>EQ:</b> rebuilt filters - full top end (no high-frequency squeeze), phase and transients now match top-tier EQs</li>
+        <li><b>EQ:</b> Q uses the common convention (same numbers, same curves as other EQs); old sessions sound unchanged</li>
+        <li><b>Saturation:</b> no phase or frequency-response change at neutral (linear-phase oversampling)</li>
+        <li><b>Saturation:</b> quiet signal passes 1:1 at any Drive; Tube and Tape now clearly differ</li>
+        <li>Noise Level goes down to -30 dB</li>
+        <li>Cmd-click (Ctrl on Windows) or right-click types a value; Option/Alt-click resets; Shift = fine</li>
+        <li>Compact About window; user manual (PDF)</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <div><span class="v">0.9.1 beta</span><span class="d">5 October 2026</span></div>
+      <ul>
+        <li><b>Activation:</b> license key or a free 7-day trial</li>
+        <li><b>Transient:</b> Attack / Release with look-ahead</li>
+        <li>Auto Gain settles from the next hit</li>
+        <li>Cassette I / II noise types</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer><span>&copy; 2026 MONARO</span><span>Surface beta, for testers</span></footer>
+</div>
+</body>
+</html>
