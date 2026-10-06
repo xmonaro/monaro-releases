@@ -1,7 +1,7 @@
 {
   "version": "0.9.8.2",
   "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "notes": "Updates: checked every time you open the plugin, in a redesigned window; the status bar link downloads the installer directly\nNoise: Level goes down to -80 dB, barely audible\nManual: opens from the menu (User manual)\nNo frame left around a control after typing a value\nDownloads and update checks work on networks that block pages.dev",
+  "notes": "Updates: Surface checks for a new beta every time it opens, also on networks that block pages.dev\nStatus bar: click “New version available” to download the installer\nNoise: Level goes down to -80 dB, barely audible\nManual: opens from the menu (User manual)\nFixed: a frame stayed around a control after typing a value",
   "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
   "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.2-beta/Surface-Beta_Installer.pkg",
   "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.2-beta/Surface-Beta_Installer.exe"
