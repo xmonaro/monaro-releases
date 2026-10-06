@@ -1,8 +1,8 @@
 {
-  "version": "0.9.8.4",
+  "version": "0.9.8.6",
   "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "notes": "Transient: Attack and Release now act on every hit (before, about every other hit was skipped and Release only lowered the level)\nAuto Gain: follows every hit, so the level (also in Delta) no longer lags or drifts",
+  "notes": "Transient: Release at -100 % now removes the tail, the hit itself stays\nIntensity: turns down only each module's main knob; character, mix and filter stay as set\nCrusher: at Amount 0 and Filter 0 it passes the sound untouched\nDisplays: the module spectra share the EQ's scale\nTyping a value: a small dark field in the plugin's own style",
   "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.4-beta/Surface-Beta_Installer.pkg",
-  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.4-beta/Surface-Beta_Installer.exe"
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.6-beta/Surface-Beta_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.6-beta/Surface-Beta_Installer.exe"
 }
