@@ -1,8 +1,8 @@
 {
-  "version": "0.9.8.2",
+  "version": "0.9.8.4",
   "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "notes": "Updates: Surface checks for a new beta every time it opens, also on networks that block pages.dev\nStatus bar: click “New version available” to download the installer\nNoise: Level goes down to -80 dB, barely audible\nManual: opens from the menu (User manual)\nFixed: a frame stayed around a control after typing a value",
+  "notes": "Transient: Attack and Release now act on every hit (before, about every other hit was skipped and Release only lowered the level)\nAuto Gain: follows every hit, so the level (also in Delta) no longer lags or drifts",
   "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.2-beta/Surface-Beta_Installer.pkg",
-  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.2-beta/Surface-Beta_Installer.exe"
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.4-beta/Surface-Beta_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.4-beta/Surface-Beta_Installer.exe"
 }
