@@ -1,8 +1,8 @@
 {
-  "version": "0.9.8.7",
+  "version": "0.9.9.1",
   "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "notes": "Transient: negative Release shortens the tail smoothly, without the gated, jerky sound at -100 %",
+  "notes": "Noise: two recorded cassette tapes; Tone is now a tilt that can also darken the noise",
   "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.7-beta/Surface-Beta_Installer.pkg",
-  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.8.7-beta/Surface-Beta_Installer.exe"
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.9.1-beta/Surface-Beta_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.9.1-beta/Surface-Beta_Installer.exe"
 }
