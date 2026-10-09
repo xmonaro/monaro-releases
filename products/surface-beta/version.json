@@ -1,8 +1,8 @@
 {
-  "version": "0.9.9.1",
+  "version": "0.9.10",
   "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "notes": "Noise: two recorded cassette tapes; Tone is now a tilt that can also darken the noise",
+  "notes": "Saturation rebuilt with Tone; steady Auto Gain; EQ draw mode and 96 dB cuts; Static / Dynamic displays; DAW menu on right-click; A/B removed",
   "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.9.1-beta/Surface-Beta_Installer.pkg",
-  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.9.1-beta/Surface-Beta_Installer.exe"
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.10-beta/Surface-Beta_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.10-beta/Surface-Beta_Installer.exe"
 }

@@ -106,15 +106,23 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
 
   <section class="current grid">
     <div class="meta">
-      <div><span class="label">Current beta</span><span>7 October 2026</span></div>
+      <div><span class="label">Current beta</span><span>9 October 2026</span></div>
     </div>
     <div>
-      <div class="release">0.9.9.1<small>beta</small></div>
+      <div class="release">0.9.10<small>beta</small></div>
       <div class="whatsnew">
         <span class="label">What's new</span>
         <ul>
-          <li><b>Noise:</b> two recorded tapes, Cassette (a blank Type I tape) and Old Cassette (a fifty-year-old tape on a 1990s Marantz deck), replace the synthetic Cassette I / II</li>
-          <li><b>Noise Tone:</b> now a tilt of &plusmn;12 dB around 800 Hz: left darker and softer, right brighter. Sessions saved with an earlier Tone open at +12 dB</li>
+          <li><b>Saturation:</b> rebuilt: Drive really drives (heavy settings used to let the clean signal through), the hat keeps its loudness at any setting, and much less aliasing on the top octave at the same CPU</li>
+          <li><b>Saturation Tone:</b> new: up keeps the top open and bright, down drives the body and softens the top. Tape Character now goes from new tape to old tape; old sessions keep their sound</li>
+          <li><b>Auto Gain:</b> one steady gain for all hits (no level swings between loud and quiet hits), catches up with a knob move or automation before the next hit, matches loudness as heard</li>
+          <li><b>Noise:</b> Tone changes only the colour, the loudness stays (sessions saved before 0.9.9 open at 0 dB); short Release values follow the hit smoothly</li>
+          <li><b>Displays:</b> the kinds (noise colours, Tube / Tape) sit at the top of the display and the display keeps its size on every page; Noise and Transient have a Static view (1/4 to 4 bars standing still, in time with the song) and a Dynamic one (scrolling 0.25 to 16 s), the wheel zooms, and the last view you chose opens next time; what a module raises is filled in its colour, what it lowers is hatched</li>
+          <li><b>EQ:</b> cuts up to 96 dB/oct; draw mode (pencil): sketch a curve and the bands follow it; every wheel notch changes a cut's slope by one step; Cmd-drag moves the frequency only; double-click a band resets its gain. EQ slope automation recorded in 0.9.9.1 or earlier should be re-recorded (more slopes)</li>
+          <li><b>Right-click:</b> on any knob, slider or fader opens your DAW's menu for that parameter (automation, MIDI learn); in Logic (AU) it types a value. Cmd-click resets, double-click types</li>
+          <li><b>Rack:</b> modules switch with a slide switch, a click on the name opens the module, off modules sink and fade, an off module's page title dims; Bypass darkens the window and says BYPASSED</li>
+          <li><b>Hint line:</b> the status bar says what the control under the mouse does (menu: Show hints)</li>
+          <li><b>Simpler header:</b> A/B and Copy removed (your DAW's undo covers it), a larger header; the spectrum analyser's Max resolution is gone (High is the finest)</li>
         </ul>
       </div>
     </div>
@@ -127,11 +135,11 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
     <div class="strip">
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0.6 0.6 14.8 14.8" aria-hidden="true"><path d="M11.2 8.4c0-1.6 1.3-2.4 1.4-2.4-.8-1.1-2-1.3-2.4-1.3-1-.1-2 .6-2.5.6s-1.3-.6-2.2-.6C4.4 4.7 3.3 5.4 2.7 6.5c-1.2 2.1-.3 5.2.9 6.9.6.8 1.2 1.7 2.1 1.7.8 0 1.2-.5 2.2-.5s1.3.5 2.2.5c.9 0 1.5-.9 2-1.7.6-.9.9-1.8.9-1.9 0 0-1.8-.7-1.8-3.1zM9.6 3.6c.5-.6.8-1.4.7-2.2-.7 0-1.5.5-2 1.1-.4.5-.8 1.3-.7 2.1.8.1 1.5-.4 2-1z"/></svg>macOS</div>
-        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.9.1-beta/Surface-Beta_Installer.pkg">Download</a>
+        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.10-beta/Surface-Beta_Installer.pkg">Download</a>
       </div>
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h4.4v4.4H3zM8.6 3H13v4.4H8.6zM3 8.6h4.4V13H3zM8.6 8.6H13V13H8.6z"/></svg>Windows</div>
-        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.9.1-beta/Surface-Beta_Installer.exe">Download</a>
+        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.10-beta/Surface-Beta_Installer.exe">Download</a>
       </div>
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M3.8 2h5.7l3 3v9h-8.7zM5.6 7.6h4.8v1.1H5.6zm0 2.4h4.8v1.1H5.6z"/></svg>Manual</div>
@@ -145,6 +153,13 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
   <div class="rule"></div>
   <section class="history">
     <div class="grid history-head"><span class="label">Earlier betas</span><span></span></div>
+    <div class="entry">
+      <div><span class="v">0.9.9.1 beta</span><span class="d">7 October 2026</span></div>
+      <ul>
+        <li><b>Noise:</b> two recorded tapes, Cassette (a blank Type I tape) and Old Cassette (a fifty-year-old tape on a 1990s Marantz deck), replace the synthetic Cassette I / II</li>
+        <li><b>Noise Tone:</b> now a tilt of &plusmn;12 dB around 800 Hz: left darker and softer, right brighter. Sessions saved with an earlier Tone open at +12 dB</li>
+      </ul>
+    </div>
     <div class="entry">
       <div><span class="v">0.9.8.7 beta</span><span class="d">6 October 2026</span></div>
       <ul>
