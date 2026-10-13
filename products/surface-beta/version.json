@@ -1,8 +1,8 @@
 {
-  "version": "0.9.11",
+  "version": "0.9.14",
   "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "notes": "EQ high cuts without a bump near the top, one-gesture bands and edge shelves; Noise follows each hit; gentle Crusher filter; animated module reorder",
+  "notes": "Noise follows the hat like an envelope follower (every hit gets its noise); Attack rounds its start; Release -100 to +100 %: shorter or up to 1 s longer",
   "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.11-beta/Surface-Beta_Installer.pkg",
-  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.11-beta/Surface-Beta_Installer.exe"
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.14-beta/Surface-Beta_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.14-beta/Surface-Beta_Installer.exe"
 }

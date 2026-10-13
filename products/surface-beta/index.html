@@ -108,19 +108,16 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
 
   <section class="current grid">
     <div class="meta">
-      <div><span class="label">Current beta</span><span>11 October 2026</span></div>
+      <div><span class="label">Current beta</span><span>13 October 2026</span></div>
     </div>
     <div>
-      <div class="release">0.9.11<small>beta</small></div>
+      <div class="release">0.9.14<small>beta</small></div>
       <div class="whatsnew">
         <span class="label">What's new</span>
         <ul>
-          <li><b>EQ:</b> steep high cuts near the top of the spectrum no longer raise a bump below the cutoff</li>
-          <li><b>EQ:</b> a click on the curve always adds a band and drags it in one gesture, also with a band selected; new bands near the edges start as shelves, only the outermost range adds a cut</li>
-          <li><b>EQ:</b> the wheel on a cut makes it steeper upwards and gentler downwards; in draw mode an edge drawn down to &minus;15&nbsp;dB already becomes a cut</li>
-          <li><b>Noise:</b> follows each hit. Attack shapes only the rise and no longer makes the noise quieter, Release sets the length of the tail at any Level, and the flutter with a dark Tone is gone</li>
-          <li><b>Crusher:</b> the tone filter is a gentle 6&nbsp;dB/oct slope without resonance</li>
-          <li><b>Rack:</b> modules reorder with motion: the neighbours slide aside while you drag, and a module stays within the module section</li>
+          <li><b>Noise:</b> follows the hat&rsquo;s level like an envelope follower, so every hit gets its noise, quiet ghost notes and pedal hats on a loud tail included; loud and quiet hits keep their ratio, and a panned sound keeps its noise on its own side</li>
+          <li><b>Noise Attack:</b> rounds off the start of the noise and lets the hat&rsquo;s own attack through</li>
+          <li><b>Noise Release:</b> now &minus;100 to +100&nbsp;%: at 0 the noise lasts exactly as long as the hat, to the left it is shorter, to the right it rings on up to one second longer and fades out completely. Release in older sessions starts at 0</li>
         </ul>
       </div>
     </div>
@@ -133,11 +130,11 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
     <div class="strip">
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0.6 0.6 14.8 14.8" aria-hidden="true"><path d="M11.2 8.4c0-1.6 1.3-2.4 1.4-2.4-.8-1.1-2-1.3-2.4-1.3-1-.1-2 .6-2.5.6s-1.3-.6-2.2-.6C4.4 4.7 3.3 5.4 2.7 6.5c-1.2 2.1-.3 5.2.9 6.9.6.8 1.2 1.7 2.1 1.7.8 0 1.2-.5 2.2-.5s1.3.5 2.2.5c.9 0 1.5-.9 2-1.7.6-.9.9-1.8.9-1.9 0 0-1.8-.7-1.8-3.1zM9.6 3.6c.5-.6.8-1.4.7-2.2-.7 0-1.5.5-2 1.1-.4.5-.8 1.3-.7 2.1.8.1 1.5-.4 2-1z"/></svg>macOS</div>
-        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.11-beta/Surface-Beta_Installer.pkg">Download</a>
+        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.14-beta/Surface-Beta_Installer.pkg">Download</a>
       </div>
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h4.4v4.4H3zM8.6 3H13v4.4H8.6zM3 8.6h4.4V13H3zM8.6 8.6H13V13H8.6z"/></svg>Windows</div>
-        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.11-beta/Surface-Beta_Installer.exe">Download</a>
+        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.14-beta/Surface-Beta_Installer.exe">Download</a>
       </div>
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M3.8 2h5.7l3 3v9h-8.7zM5.6 7.6h4.8v1.1H5.6zm0 2.4h4.8v1.1H5.6z"/></svg>Manual</div>
@@ -159,6 +156,17 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
   <div class="rule"></div>
   <section class="history">
     <div class="grid history-head"><span class="label">Earlier betas</span><span></span></div>
+    <div class="entry">
+      <div><span class="v">0.9.11 beta</span><span class="d">11 October 2026</span></div>
+      <ul>
+        <li><b>EQ:</b> steep high cuts near the top of the spectrum no longer raise a bump below the cutoff</li>
+        <li><b>EQ:</b> a click on the curve always adds a band and drags it in one gesture, also with a band selected; new bands near the edges start as shelves, only the outermost range adds a cut</li>
+        <li><b>EQ:</b> the wheel on a cut makes it steeper upwards and gentler downwards; in draw mode an edge drawn down to &minus;15&nbsp;dB already becomes a cut</li>
+        <li><b>Noise:</b> follows each hit. Attack shapes only the rise and no longer makes the noise quieter, Release sets the length of the tail at any Level, and the flutter with a dark Tone is gone</li>
+        <li><b>Crusher:</b> the tone filter is a gentle 6&nbsp;dB/oct slope without resonance</li>
+        <li><b>Rack:</b> modules reorder with motion: the neighbours slide aside while you drag, and a module stays within the module section</li>
+      </ul>
+    </div>
     <div class="entry">
       <div><span class="v">0.9.10 beta</span><span class="d">9 October 2026</span></div>
       <ul>
