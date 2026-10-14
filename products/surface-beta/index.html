@@ -108,16 +108,17 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
 
   <section class="current grid">
     <div class="meta">
-      <div><span class="label">Current beta</span><span>13 October 2026</span></div>
+      <div><span class="label">Current beta</span><span>14 October 2026</span></div>
     </div>
     <div>
-      <div class="release">0.9.14<small>beta</small></div>
+      <div class="release">0.9.15<small>beta</small></div>
       <div class="whatsnew">
         <span class="label">What's new</span>
         <ul>
-          <li><b>Noise:</b> follows the hat&rsquo;s level like an envelope follower, so every hit gets its noise, quiet ghost notes and pedal hats on a loud tail included; loud and quiet hits keep their ratio, and a panned sound keeps its noise on its own side</li>
-          <li><b>Noise Attack:</b> rounds off the start of the noise and lets the hat&rsquo;s own attack through</li>
-          <li><b>Noise Release:</b> now &minus;100 to +100&nbsp;%: at 0 the noise lasts exactly as long as the hat, to the left it is shorter, to the right it rings on up to one second longer and fades out completely. Release in older sessions starts at 0</li>
+          <li><b>Auto Gain:</b> holds one level on loops with accents; with Saturation or Transient the level no longer sags for a few seconds after each loud hit</li>
+          <li><b>Auto Gain:</b> never jumps: it lifts the level by at most 12&nbsp;dB, and on sounds a module all but silences (heavy Crusher on very quiet crackle) it no longer leaps up and down</li>
+          <li><b>Transient Attack:</b> a hit right after a soft pickup or flam gets its Attack (the pickup used to take the trigger and the hit itself stayed untouched)</li>
+          <li><b>Transient Release:</b> turned left, a quick second hit inside the first one&rsquo;s tail (a flam, a roll) keeps its level instead of being cut with the tail</li>
         </ul>
       </div>
     </div>
@@ -130,11 +131,11 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
     <div class="strip">
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0.6 0.6 14.8 14.8" aria-hidden="true"><path d="M11.2 8.4c0-1.6 1.3-2.4 1.4-2.4-.8-1.1-2-1.3-2.4-1.3-1-.1-2 .6-2.5.6s-1.3-.6-2.2-.6C4.4 4.7 3.3 5.4 2.7 6.5c-1.2 2.1-.3 5.2.9 6.9.6.8 1.2 1.7 2.1 1.7.8 0 1.2-.5 2.2-.5s1.3.5 2.2.5c.9 0 1.5-.9 2-1.7.6-.9.9-1.8.9-1.9 0 0-1.8-.7-1.8-3.1zM9.6 3.6c.5-.6.8-1.4.7-2.2-.7 0-1.5.5-2 1.1-.4.5-.8 1.3-.7 2.1.8.1 1.5-.4 2-1z"/></svg>macOS</div>
-        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.14-beta/Surface-Beta_Installer.pkg">Download</a>
+        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.15-beta/Surface-Beta_Installer.pkg">Download</a>
       </div>
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h4.4v4.4H3zM8.6 3H13v4.4H8.6zM3 8.6h4.4V13H3zM8.6 8.6H13V13H8.6z"/></svg>Windows</div>
-        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.14-beta/Surface-Beta_Installer.exe">Download</a>
+        <a class="control" href="https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.15-beta/Surface-Beta_Installer.exe">Download</a>
       </div>
       <div class="bay">
         <div class="name"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M3.8 2h5.7l3 3v9h-8.7zM5.6 7.6h4.8v1.1H5.6zm0 2.4h4.8v1.1H5.6z"/></svg>Manual</div>
@@ -156,6 +157,14 @@ footer { margin-top: 36px; padding-top: 14px; display: flex; justify-content: sp
   <div class="rule"></div>
   <section class="history">
     <div class="grid history-head"><span class="label">Earlier betas</span><span></span></div>
+    <div class="entry">
+      <div><span class="v">0.9.14 beta</span><span class="d">13 October 2026</span></div>
+      <ul>
+        <li><b>Noise:</b> follows the hat&rsquo;s level like an envelope follower, so every hit gets its noise, quiet ghost notes and pedal hats on a loud tail included; loud and quiet hits keep their ratio, and a panned sound keeps its noise on its own side</li>
+        <li><b>Noise Attack:</b> rounds off the start of the noise and lets the hat&rsquo;s own attack through</li>
+        <li><b>Noise Release:</b> now &minus;100 to +100&nbsp;%: at 0 the noise lasts exactly as long as the hat, to the left it is shorter, to the right it rings on up to one second longer and fades out completely. Release in older sessions starts at 0</li>
+      </ul>
+    </div>
     <div class="entry">
       <div><span class="v">0.9.11 beta</span><span class="d">11 October 2026</span></div>
       <ul>

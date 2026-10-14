@@ -1,8 +1,8 @@
 {
-  "version": "0.9.14",
+  "version": "0.9.15",
   "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "notes": "Noise follows the hat like an envelope follower (every hit gets its noise); Attack rounds its start; Release -100 to +100 %: shorter or up to 1 s longer",
+  "notes": "Auto Gain holds one steady level on accented loops and never jumps (lift capped at 12 dB); Transient: Attack catches a hit right after a pickup or flam, Release no longer cuts a quick second hit in the tail",
   "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.14-beta/Surface-Beta_Installer.pkg",
-  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.14-beta/Surface-Beta_Installer.exe"
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.15-beta/Surface-Beta_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.15-beta/Surface-Beta_Installer.exe"
 }
