@@ -1,5 +1,8 @@
 {
-  "version": "0.8.8",
-  "url": "https://monaro-3az.pages.dev/",
-  "notes": "Current release."
+  "version": "1.0.0",
+  "url": "https://xmonaro.github.io/monaro-releases/products/surface/",
+  "notes": "Surface 1.0, the first release: six factory presets; loading a preset keeps the window size",
+  "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface/",
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-1.0.0/Surface_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-1.0.0/Surface_Installer.exe"
 }

@@ -1,8 +1,8 @@
 {
-  "version": "0.9.15",
-  "url": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "notes": "Auto Gain holds one steady level on accented loops and never jumps (lift capped at 12 dB); Transient: Attack catches a hit right after a pickup or flam, Release no longer cuts a quick second hit in the tail",
-  "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface-beta/",
-  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.15-beta/Surface-Beta_Installer.pkg",
-  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-0.9.15-beta/Surface-Beta_Installer.exe"
+  "version": "1.0.0",
+  "url": "https://xmonaro.github.io/monaro-releases/products/surface/",
+  "notes": "Surface 1.0, the first release: six factory presets; loading a preset keeps the window size",
+  "changelogUrl": "https://xmonaro.github.io/monaro-releases/products/surface/",
+  "downloadMac": "https://github.com/xmonaro/monaro-releases/releases/download/surface-1.0.0/Surface_Installer.pkg",
+  "downloadWindows": "https://github.com/xmonaro/monaro-releases/releases/download/surface-1.0.0/Surface_Installer.exe"
 }
