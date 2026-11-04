@@ -1,0 +1,4 @@
+# monarolab.com until the full site launches. /surface is printed in the Tribute product message,
+# which cannot be edited: it must keep working for good. Cloudflare Pages only; GitHub Pages ignores this file.
+/         /products/surface/  302
+/surface  /products/surface/  302

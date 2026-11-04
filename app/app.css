@@ -1,0 +1,85 @@
+/* The cabinet in Telegram, in the plugin's visual language (docs/ui/style-guide.md in the Surface repo):
+   matte chassis, graphite windows with a lit lip, Archivo in three cuts, thin rules, neutral controls.
+   Graphite and Chalk follow Telegram's colour scheme. */
+@font-face { font-family: "Archivo"; src: url("../fonts/Archivo-Regular.ttf"); font-display: swap; }
+@font-face { font-family: "Archivo SemiExpanded"; src: url("../fonts/Archivo-SemiExpandedMedium.ttf"); font-display: swap; }
+@font-face { font-family: "Archivo Expanded"; src: url("../fonts/Archivo-ExpandedMedium.ttf"); font-display: swap; }
+
+:root {
+  --chassis: #232527; --plate: #2b2d30; --raised: #35383b; --seam: #17181a; --lit: rgba(255,255,255,.05);
+  --text: #e4e6e8; --dim: #a4a8ad; --faint: #797d83;
+  --well: #18191b; --well-text: #e4e6e8; --well-dim: #a4a8ad; --well-lip: rgba(255,255,255,.06);
+  --danger: #d9694f; --ok: #35977a;
+}
+:root[data-theme="chalk"] {
+  --chassis: #e2e4e6; --plate: #eceef0; --raised: #f6f7f8; --seam: #c6c9cd; --lit: rgba(255,255,255,.7);
+  --text: #1d1e20; --dim: #4c5056; --faint: #6a6e74;
+  --well: #2b2c2e; --well-text: #eceef0; --well-dim: #aeb2b7; --well-lip: rgba(255,255,255,.75);
+  --danger: #b5432b; --ok: #24785f;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; padding: 0 16px calc(32px + env(safe-area-inset-bottom));
+  background: var(--chassis); color: var(--text);
+  font: 15px/1.45 "Archivo", system-ui, sans-serif; overflow-x: hidden;
+}
+.head { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+.wordmark { font: 16px "Archivo Expanded", "Archivo", sans-serif; letter-spacing: .27em; }
+.engraved, .lang, .tabs button, .button, label {
+  font: 11px "Archivo SemiExpanded", "Archivo", sans-serif; letter-spacing: .14em; text-transform: uppercase;
+}
+.lang { background: none; border: 0; color: var(--dim); padding: 12px 0 12px 16px; cursor: pointer; }
+
+.tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--seam); box-shadow: 0 1px 0 var(--lit); }
+.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 12px 0; color: var(--faint); cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--text); }
+
+main { padding-top: 24px; }
+h2 { margin: 32px 0 12px; font: 11px "Archivo SemiExpanded", "Archivo", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+h2:first-child { margin-top: 0; }
+p { margin: 0 0 12px; }
+.dim { color: var(--dim); }
+.small { font-size: 13px; }
+
+.well {
+  background: var(--well); color: var(--well-text); border-radius: 8px; padding: 16px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.35), 0 1px 0 var(--well-lip);
+}
+.product-name { font: 15px "Archivo Expanded", "Archivo", sans-serif; letter-spacing: .27em; text-transform: uppercase; }
+.status { display: flex; align-items: center; gap: 8px; margin-top: 12px; color: var(--well-dim); font-size: 14px; }
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+.status.revoked::before { background: var(--danger); }
+
+.row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--seam); box-shadow: 0 1px 0 var(--lit); align-items: baseline; }
+.row > :first-child { color: var(--dim); flex: none; }
+.row > :last-child { text-align: right; min-width: 0; overflow-wrap: anywhere; }
+.link { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; cursor: pointer; text-align: inherit; }
+
+.button {
+  display: block; width: 100%; min-height: 44px; margin-top: 12px; padding: 12px 16px; text-align: center;
+  background: var(--raised); color: var(--text); border: 1px solid var(--seam); border-radius: 4px; box-shadow: inset 0 1px 0 var(--lit); cursor: pointer;
+}
+.button:active { background: var(--plate); }
+.button:disabled { color: var(--faint); cursor: default; }
+.button.primary { background: var(--text); color: var(--chassis); border-color: var(--text); box-shadow: none; }
+.button.danger { color: var(--danger); }
+.buttons { display: flex; gap: 8px; }
+.buttons .button { flex: 1; min-width: 0; padding-left: 8px; padding-right: 8px; }
+
+label { display: block; margin: 16px 0 8px; color: var(--dim); }
+input {
+  width: 100%; min-height: 44px; padding: 10px 12px; font: 16px "Archivo", sans-serif;
+  background: var(--well); color: var(--well-text); border: 0; border-radius: 4px; outline: 0;
+  box-shadow: inset 0 2px 3px rgba(0,0,0,.35), 0 1px 0 var(--well-lip);
+}
+input:focus { box-shadow: inset 0 0 0 1px var(--well-dim); }
+input::placeholder { color: var(--well-dim); opacity: .7; }
+
+.key { display: block; margin: 8px 0 12px; font: 17px "Archivo", sans-serif; letter-spacing: .06em; user-select: all; -webkit-user-select: all; }
+.note { margin-top: 12px; font-size: 13px; color: var(--dim); }
+.error { margin-top: 12px; font-size: 14px; color: var(--danger); }
+.list-item { display: block; width: 100%; padding: 12px 0; background: none; border: 0; border-bottom: 1px solid var(--seam); box-shadow: 0 1px 0 var(--lit); color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.list-item span { display: block; color: var(--dim); font-size: 13px; overflow-wrap: anywhere; }
+.list-item .revoked { color: var(--danger); }
+.mono { font-size: 12px; color: var(--dim); overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; }
