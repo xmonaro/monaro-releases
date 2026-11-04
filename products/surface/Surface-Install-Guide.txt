@@ -1,0 +1,58 @@
+SURFACE by MONARO
+Installation guide
+
+
+macOS (11 or later, VST3 and Audio Unit)
+----------------------------------------
+The installer is not notarised by Apple, so macOS blocks it the first time.
+This is expected. Follow these steps once:
+
+1. Download Surface_Installer.pkg and double-click it.
+2. macOS says it cannot open the file. Click Done (or OK).
+3. Open System Settings > Privacy & Security.
+4. Scroll down to the Security section and click Open Anyway next to
+   Surface_Installer.pkg. Enter your password if asked.
+5. Click Open Anyway in the window that appears. The installer starts.
+6. Follow the installer, then restart your DAW.
+
+The plug-ins go to:
+  /Library/Audio/Plug-Ins/VST3
+  /Library/Audio/Plug-Ins/Components
+
+
+Windows (10 or 11, 64-bit, VST3)
+--------------------------------
+The installer is not code-signed, so Windows may warn about it.
+
+1. Download Surface_Installer.exe and double-click it.
+2. If SmartScreen says "Windows protected your PC", click More info,
+   then Run anyway.
+3. Click Yes when Windows asks for administrator permission.
+4. Follow the installer, then restart your DAW.
+
+The plug-in goes to:
+  C:\Program Files\Common Files\VST3
+
+
+Activate your license
+---------------------
+1. Insert Surface on a track in your DAW and open its window.
+2. Enter the key from your purchase message in the activation window.
+   Your computer needs internet access for this step.
+
+Your key comes from the Telegram bot @monarolab_bot right after payment.
+Without a key, Surface runs as a 7-day trial on each computer.
+A license covers one computer.
+
+
+Surface is not in your DAW?
+---------------------------
+- Rescan plug-ins in your DAW.
+- On macOS, check that the formats were selected in the installer.
+- On Windows, make sure your DAW scans the VST3 folder above.
+- Pro Tools is not supported: Surface has no AAX version.
+
+
+Help
+----
+Telegram: @xmonaro
