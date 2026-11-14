@@ -1,0 +1,18 @@
+# Security headers for monarolab.com (Cloudflare Pages only; GitHub Pages ignores this file).
+# Everything is served from this origin: no third-party scripts, fonts or trackers. Inline styles are
+# allowed (style attributes in the pages); inline scripts are not.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=(), browsing-topics=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+# The Telegram Mini App: Telegram's script, the license Worker, and framing by Telegram's web client.
+/app/*
+  ! X-Frame-Options
+  ! Cross-Origin-Opener-Policy
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors https://web.telegram.org https://*.telegram.org
