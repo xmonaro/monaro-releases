@@ -53,12 +53,18 @@
   function date(seconds) { return new Date(seconds * 1000).toLocaleDateString(state.lang === "ru" ? "ru-RU" : "en-GB", { year: "numeric", month: "short", day: "numeric" }); }
   function haptic(kind) { if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(kind); }
 
+  // Launch data is valid for an hour and Telegram does not renew it while the app is open: a 401 asks to reopen it.
   function api(method, path, body) {
     return fetch(API + path, {
       method: method,
       headers: { authorization: "tma " + tg.initData, "content-type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
     }).then(function (response) {
+      if (response.status === 401) {
+        show(h("p", { text: state.lang === "ru" ? "Сессия устарела. Закройте кабинет и откройте его снова." : "This session has expired. Close the app and open it again." }),
+          button(state.lang === "ru" ? "Закрыть" : "Close", function () { tg.close(); }));
+        throw new Error("expired");
+      }
       return response.json().then(function (data) {
         if (!response.ok) { var error = new Error(data.error || "error"); error.code = data.error; throw error; }
         return data;
