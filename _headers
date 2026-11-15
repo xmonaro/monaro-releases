@@ -27,3 +27,14 @@
 /ua/checkout/*
   ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
+
+# Portfolio (all three languages): Spotify's player for the work samples, loaded only when a track is played.
+/portfolio/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; frame-src https://open.spotify.com; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+/en/portfolio/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; frame-src https://open.spotify.com; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+/ua/portfolio/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; frame-src https://open.spotify.com; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
