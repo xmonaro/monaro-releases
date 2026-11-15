@@ -4,3 +4,5 @@
 /surface  /products/surface/  302
 /uk /ua/ 301
 /uk/* /ua/:splat 301
+/about /portfolio/ 301
+/about/* /portfolio/ 301
