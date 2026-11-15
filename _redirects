@@ -2,3 +2,5 @@
 # (Web/landing) is served at the root; /surface is printed in the Tribute product message, which
 # cannot be edited: it must keep working for good.
 /surface  /products/surface/  302
+/uk /ua/ 301
+/uk/* /ua/:splat 301
