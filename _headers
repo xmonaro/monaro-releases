@@ -16,3 +16,14 @@
   ! Cross-Origin-Opener-Policy
   ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors https://web.telegram.org https://*.telegram.org
+
+# Checkout (all three languages): Paddle.js and Paddle's payment frame. Framing of this page stays denied.
+/checkout/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
+/en/checkout/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
+/uk/checkout/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
