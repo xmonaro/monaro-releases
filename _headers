@@ -9,6 +9,7 @@
   Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: DENY
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Speculation-Rules: "/speculation-rules.json"
 
 # The Telegram Mini App: Telegram's script, the license Worker, and framing by Telegram's web client.
 /app/*
@@ -38,3 +39,7 @@
 /ua/portfolio/*
   ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self' https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; frame-src https://open.spotify.com; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+# The pages to fetch ahead when a link is hovered (Chrome); read by the header above.
+/speculation-rules.json
+  Content-Type: application/speculationrules+json
