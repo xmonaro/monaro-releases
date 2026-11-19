@@ -1,5 +1,6 @@
 # Security headers for monarolab.com (Cloudflare Pages only; GitHub Pages ignores this file).
-# Everything is served from this origin: no third-party scripts, fonts or trackers. Inline styles are
+# Served from this origin, except the license Worker (verify, beats, account) and Cloudflare Web Analytics,
+# which assets/consent.js loads only after the visitor allows statistics. Inline styles are
 # allowed (style attributes in the pages); inline scripts are not.
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains
@@ -8,7 +9,7 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=(), browsing-topics=()
   Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self' https://license.monaro.workers.dev https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
   Speculation-Rules: "/speculation-rules.json"
 
 # The Telegram Mini App: Telegram's script, the license Worker, and framing by Telegram's web client.
@@ -29,6 +30,18 @@
   ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
 
+
+# Account pages (all three languages): supabase-js (pinned, SRI) from jsDelivr, Supabase Auth and the Worker.
+# No analytics here.
+/account/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+/en/account/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+/ua/account/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
 # The pages to fetch ahead when a link is hovered (Chrome); read by the header above.
 /speculation-rules.json

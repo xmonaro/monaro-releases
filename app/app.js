@@ -8,26 +8,43 @@
   var view = document.getElementById("view");
   var tabsEl = document.getElementById("tabs");
   var langButton = document.getElementById("lang");
-  var state = { me: null, tab: "products", lang: "ru", back: null };
+  var state = { me: null, tab: "products", lang: "ru", back: null, contracts: [], deepLink: null, deepSeen: false };
+  var deep = /[?&]contract=(LC-[A-Z0-9-]{9})/.exec(location.search);
+  if (deep) { state.deepLink = deep[1]; state.deepSeen = true; }
+  var swipesLocked = false;
 
   var TEXT = {
     ru: {
-      products: "Продукты", support: "Поддержка", panel: "Панель", loading: "Загрузка…", failed: "Не удалось загрузить. Закрой и открой кабинет ещё раз.", onlyTelegram: "Кабинет открывается из бота в Telegram.",
+      products: "Продукты", contracts: "Договоры", support: "Поддержка", panel: "Панель", loading: "Загрузка…", failed: "Не удалось загрузить. Закрой и открой кабинет ещё раз.", onlyTelegram: "Кабинет открывается из бота в Telegram.",
       active: "Лицензия активна, навсегда", revoked: "Лицензия отозвана", licensedTo: "Лицензия на имя", change: "Изменить", computers: "Компьютеры", none: "Не активирована", since: "Куплена", installer: "Установщик и руководство",
       installNote: "Если система блокирует установщик. macOS: Системные настройки > Конфиденциальность и безопасность > «Всё равно открыть». Windows: в окне SmartScreen «Подробнее» > «Выполнить в любом случае».",
       keyNote: "Ключ показывается один раз: он в сообщении с покупкой в чате с ботом. Потерял, напиши в поддержку.",
       empty: "На этом аккаунте пока нет продуктов. Ключ придёт в чат с ботом сразу после оплаты.", buy: "Купить", haveKey: "Уже есть ключ", keyLabel: "Ключ лицензии", add: "Добавить", badKey: "Такой ключ не подходит. Если он точно верный, напиши в поддержку.",
       nameLabel: "Имя в плагине", nameNote: "Плагин покажет новое имя при следующем обновлении лицензии.", save: "Сохранить", cancel: "Отмена", saveFailed: "Не удалось сохранить.",
       questions: "Вопросы по покупке, ключу или активации", write: "Написать в поддержку", bug: "Что-то работает неправильно", bugText: "Бот попросит описание в чате. Туда же можно приложить скриншот, видео или аудио.", report: "Сообщить об ошибке", reportFailed: "Сначала нажми Start в чате с ботом.",
+      st_awaiting: "Ожидает подписи", st_signed: "Подписан", st_revoked: "Отозван", st_cancelled: "Отменён", currency: "грн",
+      contractsEmpty: "Договоров пока нет.", contractNo: "Договор №", beat: "Бит", dateLabel: "Дата", amount: "Сумма", statusLabel: "Статус", licensee: "Лицензиат",
+      sendPdf: "Прислать PDF в чат", pdfSent: "PDF отправлен в чат с ботом.", pdfFailed: "Не удалось отправить. Сначала нажми Start в чате с ботом.", signAction: "Подписать",
+      readFirst: "Договор пришёл в чат с ботом: прочитай его перед подписью.", yourSignature: "Твоя подпись", clear: "Очистить", agree: "Я прочитал(а) договор № {n} и подписываю его",
+      signedDone: "Подписано. Подписанный экземпляр отправлен в чат.", alreadySigned: "Этот договор уже подписан.", notSignable: "Этот договор уже нельзя подписать.",
+      notFound: "Договор не найден. Возможно, ссылка открыта с другого аккаунта Telegram.", rateLimited: "Слишком много попыток. Подожди немного и повтори.", needSignature: "Поставь подпись в поле.", needAgree: "Отметь, что прочитал(а) договор.",
+      netFailed: "Не получилось. Проверь сеть и повтори.", toContracts: "К договорам",
     },
     en: {
-      products: "Products", support: "Support", panel: "Panel", loading: "Loading…", failed: "Could not load. Close your account and open it again.", onlyTelegram: "Your account opens from the bot in Telegram.",
+      products: "Products", contracts: "Contracts", support: "Support", panel: "Panel", loading: "Loading…", failed: "Could not load. Close your account and open it again.", onlyTelegram: "Your account opens from the bot in Telegram.",
       active: "License active, for life", revoked: "License revoked", licensedTo: "Licensed to", change: "Change", computers: "Computers", none: "Not activated", since: "Purchased", installer: "Installer and manual",
       installNote: "If the system blocks the installer. macOS: System Settings > Privacy & Security > Open Anyway. Windows: in the SmartScreen window, More info > Run anyway.",
       keyNote: "The key is shown only once, in your purchase message in the chat with the bot. Lost it? Write to support.",
       empty: "There are no products on this account yet. The key arrives in the chat with the bot right after payment.", buy: "Buy", haveKey: "Already have a key", keyLabel: "License key", add: "Add", badKey: "That key does not fit. If you are sure it is right, write to support.",
       nameLabel: "Name in the plug-in", nameNote: "The plug-in shows the new name at its next license refresh.", save: "Save", cancel: "Cancel", saveFailed: "Could not save.",
       questions: "Questions about a purchase, key or activation", write: "Write to support", bug: "Something not working right", bugText: "The bot asks for a description in the chat. Attach a screenshot, video or audio there too.", report: "Report a bug", reportFailed: "Press Start in the chat with the bot first.",
+      st_awaiting: "Awaiting signature", st_signed: "Signed", st_revoked: "Revoked", st_cancelled: "Cancelled", currency: "UAH",
+      contractsEmpty: "No contracts yet.", contractNo: "Contract No.", beat: "Beat", dateLabel: "Date", amount: "Amount", statusLabel: "Status", licensee: "Licensee",
+      sendPdf: "Send the PDF to the chat", pdfSent: "The PDF is sent to the chat with the bot.", pdfFailed: "Could not send. Press Start in the chat with the bot first.", signAction: "Sign",
+      readFirst: "The contract arrived in the chat with the bot: read it before signing.", yourSignature: "Your signature", clear: "Clear", agree: "I have read contract No. {n} and sign it",
+      signedDone: "Signed. The signed copy is sent to the chat.", alreadySigned: "This contract is already signed.", notSignable: "This contract can no longer be signed.",
+      notFound: "Contract not found. The link may be opened from another Telegram account.", rateLimited: "Too many attempts. Wait a moment and try again.", needSignature: "Draw your signature in the box.", needAgree: "Tick that you have read the contract.",
+      netFailed: "It did not work. Check the network and try again.", toContracts: "To contracts",
     },
   };
   function t(key) { return TEXT[state.lang][key]; }
@@ -47,6 +64,13 @@
     view.textContent = "";
     for (var i = 0; i < arguments.length; i++) if (arguments[i]) view.appendChild(arguments[i]);
     window.scrollTo(0, 0);
+    // A signature pad on screen: a vertical swipe would close the app instead of drawing.
+    var padShown = !!view.querySelector(".pad");
+    if (padShown !== swipesLocked) {
+      swipesLocked = padShown;
+      if (padShown && tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+      else if (!padShown && tg.enableVerticalSwipes) tg.enableVerticalSwipes();
+    }
   }
   function button(text, onclick, className) { return h("button", { type: "button", className: "button " + (className || ""), text: text, onclick: onclick }); }
   function row(name, value) { return h("div", { className: "row" }, h("span", { text: name }), typeof value === "string" ? h("span", { text: value }) : value); }
@@ -66,7 +90,7 @@
         throw new Error("expired");
       }
       return response.json().then(function (data) {
-        if (!response.ok) { var error = new Error(data.error || "error"); error.code = data.error; throw error; }
+        if (!response.ok) { var error = new Error(data.error || "error"); error.code = data.error; error.field = data.field; error.status = response.status; throw error; }
         return data;
       });
     });
@@ -155,6 +179,152 @@
   }
 
   // -------------------------------------------------------------------------
+  // Signature pad: dark blue ink on a paper-light box. Points are stored as fractions of the box's width
+  // (x = px / width, y = py / width, y down), the format the Worker draws into the PDF.
+
+  function signaturePad(clearText) {
+    var canvas = h("canvas", { className: "pad-canvas" });
+    var ctx = canvas.getContext("2d");
+    var strokes = [], current = null, count = 0, width = 0;
+    var el = h("div", null, h("div", { className: "pad" }, canvas, h("div", { className: "pad-line" })),
+      h("div", { className: "pad-tools" }, h("button", { type: "button", className: "link small", text: clearText, onclick: function () {
+        strokes = []; current = null; count = 0; redraw();
+      } })));
+    function ink() { ctx.strokeStyle = ctx.fillStyle = "#14246b"; ctx.lineWidth = 2.2; ctx.lineCap = ctx.lineJoin = "round"; }
+    function redraw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ink();
+      strokes.forEach(function (s) {
+        ctx.beginPath();
+        if (s.length === 1) { ctx.arc(s[0][0] * width, s[0][1] * width, 1.1, 0, 6.2832); ctx.fill(); return; }
+        ctx.moveTo(s[0][0] * width, s[0][1] * width);
+        for (var i = 1; i < s.length; i++) ctx.lineTo(s[i][0] * width, s[i][1] * width);
+        ctx.stroke();
+      });
+    }
+    function size() {
+      var w = canvas.clientWidth;
+      if (!w || w === width) return;
+      var dpr = window.devicePixelRatio || 1;
+      width = w; canvas.width = Math.round(w * dpr); canvas.height = Math.round(canvas.clientHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      redraw();
+    }
+    function at(e) {
+      var r = canvas.getBoundingClientRect();
+      return [Math.round((e.clientX - r.left) / r.width * 10000) / 10000, Math.round((e.clientY - r.top) / r.width * 10000) / 10000];
+    }
+    canvas.addEventListener("pointerdown", function (e) {
+      e.preventDefault(); size();
+      if (strokes.length >= 60 || count >= 4000) return;
+      try { canvas.setPointerCapture(e.pointerId); } catch (x) { /* the stroke still draws */ }
+      current = [at(e)]; strokes.push(current); count++;
+      ink(); ctx.beginPath(); ctx.arc(current[0][0] * width, current[0][1] * width, 1.1, 0, 6.2832); ctx.fill();
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      if (!current || count >= 4000) return;
+      var p = at(e), last = current[current.length - 1];
+      if (Math.sqrt(Math.pow((p[0] - last[0]) * width, 2) + Math.pow((p[1] - last[1]) * width, 2)) < 1.5) return;
+      current.push(p); count++;
+      ink(); ctx.beginPath(); ctx.moveTo(last[0] * width, last[1] * width); ctx.lineTo(p[0] * width, p[1] * width); ctx.stroke();
+    });
+    function end() { current = null; }
+    canvas.addEventListener("pointerup", end);
+    canvas.addEventListener("pointercancel", end);
+    window.addEventListener("resize", size);
+    setTimeout(size, 0);
+    setTimeout(size, 300);
+    return {
+      el: el,
+      strokes: function () { return strokes.map(function (s) { return s.slice(); }); },
+      clear: function () { strokes = []; current = null; count = 0; redraw(); },
+      isEmpty: function () { return count < 8; },
+    };
+  }
+
+  function debounce(fn, ms) { var timer; return function () { clearTimeout(timer); timer = setTimeout(fn, ms); }; }
+  function dmy(iso) { return String(iso).split("-").reverse().join("."); }
+  function money(c) { return c.amount + " " + (c.currency === "UAH" ? t("currency") : c.currency); }
+
+  // -------------------------------------------------------------------------
+  // Contracts for the customer: the list, a card, and the signing screen (opened from the bot's link too).
+
+  function renderContracts() {
+    setBack(null);
+    show(h("p", { className: "dim", text: t("loading") }));
+    api("GET", "/app/contracts").then(function (r) {
+      state.contracts = r.contracts;
+      if (!r.contracts.length) { show(h("p", { className: "dim", text: t("contractsEmpty") })); return; }
+      var parts = r.contracts.map(function (c) {
+        return h("button", { type: "button", className: "list-item", onclick: function () { openContract(c.id, false); } },
+          document.createTextNode(t("contractNo") + " " + c.number + " · " + c.beat_name),
+          h("span", { className: c.status === "signed" || c.status === "awaiting" ? "" : "revoked", text: dmy(c.contract_date) + " · " + money(c) + " · " + t("st_" + c.status) }));
+      });
+      show.apply(null, parts);
+    }).catch(function () { show(h("p", { className: "error", text: t("failed") })); });
+  }
+
+  function contractError(e) {
+    if (e.status === 404) return t("notFound");
+    if (e.code === "rate_limited") return t("rateLimited");
+    if (e.code === "already_signed") return t("alreadySigned");
+    if (e.code === "not_signable") return t("notSignable");
+    if (e.field === "signature") return t("needSignature");
+    return t("netFailed");
+  }
+
+  function openContract(id, direct) {
+    setBack(direct ? null : renderContracts);
+    show(h("p", { className: "dim", text: t("loading") }));
+    api("GET", "/app/contracts/" + id).then(function (c) {
+      if (direct && c.status === "awaiting") renderSign(c); else renderClientCard(c);
+    }).catch(function (e) { if (e.message !== "expired") show(h("p", { className: "error", text: contractError(e) })); });
+  }
+
+  function renderClientCard(c) {
+    setBack(renderContracts);
+    var note = h("p", { className: "note" });
+    var send = button(t("sendPdf"), function () {
+      send.disabled = true; note.className = "note"; note.textContent = "";
+      api("POST", "/app/contracts/" + c.id + "/send").then(function () { note.textContent = t("pdfSent"); send.disabled = false; })
+        .catch(function () { note.className = "error"; note.textContent = t("pdfFailed"); send.disabled = false; });
+    });
+    show(h("div", { className: "well" }, h("div", { className: "product-name", text: t("contractNo") + " " + c.number }),
+        h("div", { className: "status" + (c.status === "signed" || c.status === "awaiting" ? "" : " revoked"), text: t("st_" + c.status) })),
+      row(t("beat"), c.beat_name), row(t("dateLabel"), dmy(c.contract_date)), row(t("amount"), money(c)),
+      row(t("licensee"), state.lang === "ru" && c.licensee_ru ? c.licensee_ru : c.licensee),
+      c.status === "awaiting" ? button(t("signAction"), function () { renderSign(c); }, "primary") : null, send, note);
+  }
+
+  function renderSign(c) {
+    setBack(function () { renderClientCard(c); });
+    var pad = signaturePad(t("clear"));
+    var box = h("input", { type: "checkbox", id: "agree" });
+    var error = h("p", { className: "error" }); error.hidden = true;
+    function fail(text) { haptic("error"); error.textContent = text; error.hidden = false; sign.disabled = false; }
+    var sign = button(t("signAction"), function () {
+      error.hidden = true;
+      if (pad.isEmpty()) { fail(t("needSignature")); return; }
+      if (!box.checked) { fail(t("needAgree")); return; }
+      sign.disabled = true;
+      api("POST", "/app/contracts/" + c.id + "/sign", { agree: true, signature: pad.strokes() }).then(function () {
+        haptic("success"); c.status = "signed"; setBack(renderContracts);
+        show(h("p", { text: t("signedDone") }), button(t("toContracts"), renderContracts));
+      }).catch(function (e) {
+        if (e.message === "expired") return;
+        if (e.code === "already_signed") { c.status = "signed"; setBack(renderContracts); show(h("p", { text: t("alreadySigned") }), button(t("toContracts"), renderContracts)); return; }
+        fail(contractError(e));
+      });
+    }, "primary");
+    show(h("h2", { text: t("contractNo") + " " + c.number }), row(t("beat"), c.beat_name), row(t("amount"), money(c)),
+      row(t("licensee"), state.lang === "ru" && c.licensee_ru ? c.licensee_ru : c.licensee),
+      h("p", { className: "note", text: t("readFirst") }),
+      h("h2", { text: t("yourSignature") }), pad.el,
+      h("label", { className: "check", for: "agree" }, box, h("span", { text: t("agree").replace("{n}", c.number) })),
+      sign, error);
+  }
+
+  // -------------------------------------------------------------------------
   // The owner's panel: Russian only, the owner's own tool. The Worker checks the owner on every call.
 
   function renderPanel() {
@@ -178,7 +348,7 @@
     var search = button("Найти", function () { find(query.value, found); });
 
     var orders = h("div", null, h("p", { className: "dim small", text: "Загрузка…" }));
-    show(h("h2", { text: "Новая лицензия" }), h("label", { for: "email", text: "Почта" }), email, h("label", { for: "owner-name", text: "Имя, необязательно" }), name, create, result,
+    show(contractsSection(), h("h2", { text: "Новая лицензия" }), h("label", { for: "email", text: "Почта" }), email, h("label", { for: "owner-name", text: "Имя, необязательно" }), name, create, result,
       h("h2", { text: "Найти лицензию" }), query, search, found,
       h("h2", { text: "Заказы без ключа" }), orders);
     loadOrders(orders);
@@ -243,10 +413,197 @@
   }
 
   // -------------------------------------------------------------------------
+  // The owner's contracts (Russian only): list, card with actions, the form.
+
+  var STATUS_RU = { awaiting: "Ожидает подписи", signed: "Подписан", revoked: "Отозван", cancelled: "Отменён" };
+  var FIELD_LABELS = {
+    date: "Дата", beat_name: "Название бита", beat_link: "Ссылка на оригинал", artist_name: "Имя артиста", client_name_ru: "ФИО клиента (рус.)", client_name_ua: "ФИО клиента (укр.)",
+    citizenship: "Гражданство укр.", citizenship_ru: "Гражданство рус.", client_inn: "РНОКПП / ИНН", client_address_ua: "Адрес (укр.)", client_address_ru: "Адрес (рус.)",
+    client_email: "Email", client_telegram: "Telegram клиента", amount_num: "Сумма", signature: "Подпись", template: "Тип договора", beat_message_id: "Бит из канала",
+  };
+  // [key, label, input type, only for the UA + RU template]
+  var FORM_FIELDS = [
+    ["date", "Дата", "date"], ["beat_name", "Название бита"], ["beat_link", "Ссылка на оригинал (необязательно)"], ["artist_name", "Имя артиста"],
+    ["client_name_ru", "ФИО клиента (рус.)", "", true], ["client_name_ua", "ФИО клиента (укр.)"],
+    ["citizenship", "Гражданство укр. (напр. «України»)", "", true], ["citizenship_ru", "Гражданство рус. (напр. «Украины»)", "", true],
+    ["client_inn", "РНОКПП / ИНН"], ["client_address_ua", "Адрес (укр.)"], ["client_address_ru", "Адрес (рус.)", "", true],
+    ["client_email", "Email", "email"], ["client_telegram", "Telegram клиента"], ["amount_num", "Сумма, грн", "numeric"],
+  ];
+
+  function kyivToday() {
+    try { return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Kyiv", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()); }
+    catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+
+  function copyButton(text) {
+    return button("Скопировать ссылку", function (e) {
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { e.target.textContent = "Скопирована"; });
+    });
+  }
+  function shareButton(link) {
+    return button("Отправить клиенту", function () { tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(link)); });
+  }
+  function linkBlock(link) {
+    return h("div", { style: "margin-top:12px" }, h("p", { className: "mono", text: link }), copyButton(link), shareButton(link));
+  }
+
+  function contractsSection() {
+    var found = h("div");
+    var query = h("input", { placeholder: "Номер, бит, клиент или код", autocomplete: "off" });
+    function load() {
+      api("GET", "/app/admin/contracts?q=" + encodeURIComponent(query.value)).then(function (r) {
+        found.textContent = "";
+        if (!r.contracts.length) { found.appendChild(h("p", { className: "dim small", style: "margin-top:12px", text: "Договоров нет." })); return; }
+        r.contracts.forEach(function (c) {
+          found.appendChild(h("button", { type: "button", className: "list-item", onclick: function () { adminContractCard(c.id); } },
+            document.createTextNode(c.number + " · " + c.beat_name),
+            h("span", { className: c.status === "signed" || c.status === "awaiting" ? "" : "revoked",
+              text: c.licensee_short + (c.client_username ? " @" + c.client_username : "") + " · " + c.amount + " грн · " + STATUS_RU[c.status] })));
+        });
+      }).catch(function () { found.textContent = ""; found.appendChild(h("p", { className: "error", text: "Договоры не загрузились." })); });
+    }
+    query.addEventListener("input", debounce(load, 300));
+    load();
+    return h("div", null, h("h2", { text: "Договоры" }), button("Новый договор", function () { renderContractForm(); }, "primary"),
+      h("div", { style: "height:12px" }), query, found);
+  }
+
+  function adminContractCard(id) {
+    setBack(renderPanel);
+    api("GET", "/app/admin/contracts?q=" + encodeURIComponent(id)).then(function (r) {
+      var c = r.contracts.filter(function (x) { return x.id === id; })[0];
+      if (!c) { show(h("p", { text: "Договор не найден." })); return; }
+      var out = h("div");
+      function say(text, bad) { out.textContent = ""; out.appendChild(h("p", { className: bad ? "error" : "note", text: text })); }
+      function post(action, body) { return api("POST", "/app/admin/contracts/" + id + "/" + action, body); }
+      var parts = [
+        h("div", { className: "well" }, h("div", { className: "product-name", text: "№ " + c.number }),
+          h("div", { className: "status" + (c.status === "signed" || c.status === "awaiting" ? "" : " revoked"), text: STATUS_RU[c.status] })),
+        row("Бит", c.beat_name), row("Дата", dmy(c.contract_date)), row("Клиент", c.licensee_short + (c.client_username ? " @" + c.client_username : "")),
+        row("Сумма", c.amount + " грн"), row("Создан", date(c.created_at)),
+      ];
+      if (c.client_signed_at) parts.push(row("Подписал клиент", date(c.client_signed_at)));
+      if (c.revoked_at) parts.push(row(c.status === "cancelled" ? "Отменён" : "Отозван", date(c.revoked_at) + (c.revoke_reason ? ", " + c.revoke_reason : "")));
+      parts.push(h("p", { className: "mono", style: "margin-top:12px", text: c.id }));
+      parts.push(button("Прислать PDF в чат", function () {
+        post("send").then(function () { haptic("success"); say("PDF отправлен в чат."); }).catch(function () { haptic("error"); say("Не отправлен.", true); });
+      }));
+      if (c.status === "awaiting" && !c.client_telegram_id) {
+        parts.push(button("Новая ссылка", function () {
+          post("link").then(function (l) { haptic("success"); out.textContent = ""; out.appendChild(linkBlock(l.link)); })
+            .catch(function () { haptic("error"); say("Ссылку не создать: клиент мог уже открыть договор.", true); });
+        }));
+      }
+      if (c.status === "awaiting") {
+        parts.push(button("Отменить", function () {
+          tg.showConfirm("Отменить неподписанный договор? Он останется в реестре как отменённый.", function (yes) {
+            if (yes) post("cancel").then(function () { haptic("success"); adminContractCard(id); }).catch(function () { haptic("error"); say("Не отменён.", true); });
+          });
+        }, "danger"));
+      }
+      if (c.status === "awaiting" || c.status === "signed") {
+        var reason = h("input", { placeholder: "Причина отзыва", maxlength: "200", autocomplete: "off", style: "margin-top:12px" });
+        parts.push(reason);
+        parts.push(button("Отозвать", function () {
+          tg.showConfirm("Отозвать договор? Клиент получит уведомление, на странице проверки он станет отозванным.", function (yes) {
+            if (yes) post("revoke", { reason: reason.value }).then(function () { haptic("success"); adminContractCard(id); }).catch(function () { haptic("error"); say("Не отозван.", true); });
+          });
+        }, "danger"));
+      }
+      parts.push(out);
+      show.apply(null, parts);
+    }).catch(function () { show(h("p", { className: "error", text: "Не удалось открыть." })); });
+  }
+
+  function renderContractForm() {
+    setBack(renderPanel);
+    var draft = {};
+    try { draft = JSON.parse(sessionStorage.getItem("contractDraft") || "{}") || {}; } catch (e) { draft = {}; }
+    var template = draft.template === "L-RU" ? "L-RU" : "L-UA";
+    var beatId = typeof draft.beat_message_id === "number" ? draft.beat_message_id : null;
+    var inputs = {}, wraps = [];
+
+    function saveDraft() {
+      var d = { template: template, beat_message_id: beatId };
+      FORM_FIELDS.forEach(function (f) { d[f[0]] = inputs[f[0]].value; });
+      try { sessionStorage.setItem("contractDraft", JSON.stringify(d)); } catch (e) { /* the draft is a convenience */ }
+    }
+
+    var tUA = button("UA", function () { setTemplate("L-UA"); });
+    var tRU = button("UA + RU", function () { setTemplate("L-RU"); });
+    function setTemplate(name) {
+      template = name;
+      tUA.classList.toggle("primary", name === "L-UA"); tRU.classList.toggle("primary", name === "L-RU");
+      wraps.forEach(function (w) { w.hidden = name !== "L-RU"; });
+      saveDraft();
+    }
+
+    var beatQuery = h("input", { placeholder: "Поиск по названию", autocomplete: "off", id: "cf-beat-search" });
+    var beatList = h("div");
+    function searchBeats() {
+      api("GET", "/app/admin/beats?q=" + encodeURIComponent(beatQuery.value)).then(function (r) {
+        beatList.textContent = "";
+        r.beats.forEach(function (b) {
+          var meta = [b.bpm ? b.bpm + " BPM" : "", b.musical_key || ""].filter(Boolean).join(" ");
+          beatList.appendChild(h("button", { type: "button", className: "list-item", onclick: function () {
+            inputs.beat_name.value = b.name; beatId = b.message_id; beatList.textContent = "";
+            beatList.appendChild(h("p", { className: "note", text: "Выбран бит из канала: " + b.name }));
+            saveDraft();
+          } }, document.createTextNode(b.name + (meta ? " · " + meta : ""))));
+        });
+      }).catch(function () { beatList.textContent = ""; beatList.appendChild(h("p", { className: "error", text: "Поиск не сработал." })); });
+    }
+    beatQuery.addEventListener("input", debounce(searchBeats, 300));
+
+    var parts = [h("h2", { text: "Новый договор" }), h("div", { className: "buttons" }, tUA, tRU), h("label", { for: "cf-beat-search", text: "Бит из канала" }), beatQuery, beatList];
+    FORM_FIELDS.forEach(function (f) {
+      var input = h("input", { id: "cf-" + f[0], type: f[2] === "date" ? "date" : f[2] === "email" ? "email" : "text", autocomplete: "off", autocapitalize: "none" });
+      if (f[2] === "numeric") input.setAttribute("inputmode", "numeric");
+      if (f[2] === "date") input.max = kyivToday();
+      input.value = typeof draft[f[0]] === "string" ? draft[f[0]] : f[0] === "date" ? kyivToday() : "";
+      input.addEventListener("input", saveDraft);
+      inputs[f[0]] = input;
+      var wrap = h("div", null, h("label", { for: "cf-" + f[0], text: f[1] }), input);
+      if (f[3]) wraps.push(wrap);
+      parts.push(wrap);
+    });
+    inputs.beat_name.addEventListener("input", function () { beatId = null; saveDraft(); });
+
+    var pad = signaturePad("Очистить");
+    var error = h("p", { className: "error" }); error.hidden = true;
+    function fail(text) { haptic("error"); error.textContent = text; error.hidden = false; create.disabled = false; }
+    var create = button("Создать и подписать", function () {
+      error.hidden = true;
+      if (pad.isEmpty()) { fail("Поставь подпись в поле."); return; }
+      var body = { template: template, signature: pad.strokes() };
+      if (beatId !== null) body.beat_message_id = beatId;
+      FORM_FIELDS.forEach(function (f) { body[f[0]] = inputs[f[0]].value.trim(); });
+      body.amount_num = body.amount_num.replace(/\s/g, "");
+      create.disabled = true;
+      api("POST", "/app/admin/contracts", body).then(function (r) {
+        haptic("success");
+        try { sessionStorage.removeItem("contractDraft"); } catch (e) { /* nothing to clear */ }
+        show(h("h2", { text: "Договор создан" }), row("Номер", r.number), row("Код", r.id),
+          h("p", { className: "dim small", style: "margin-top:12px", text: "Ссылка для подписи клиента, одноразовая:" }), linkBlock(r.link),
+          button("К договорам", renderPanel));
+      }).catch(function (e) {
+        if (e.message === "expired") return;
+        fail(e.code === "bad_request" ? "Проверь поле: " + (FIELD_LABELS[e.field] || e.field || "?") + "." : "Не создан. Проверь сеть и повтори.");
+      });
+    }, "primary");
+    parts.push(h("h2", { text: "Твоя подпись" }), pad.el, create, error);
+    show.apply(null, parts);
+    setTemplate(template);
+    if (beatId !== null) beatList.appendChild(h("p", { className: "note", text: "Выбран бит из канала, его ссылка подставится сама." }));
+  }
+
+  // -------------------------------------------------------------------------
 
   function renderTabs() {
     tabsEl.textContent = "";
-    var tabs = ["products", "support"];
+    var tabs = ["products"];
+    if (state.contracts.length || state.deepSeen) tabs.push("contracts");
+    tabs.push("support");
     if (state.me && state.me.is_owner) tabs.push("panel");
     tabs.forEach(function (id) {
       tabsEl.appendChild(h("button", { type: "button", role: "tab", "aria-selected": String(state.tab === id), text: t(id), onclick: function () { state.tab = id; render(); } }));
@@ -258,7 +615,8 @@
   function render() {
     renderTabs();
     if (!state.me) return;
-    if (state.tab === "support") renderSupport();
+    if (state.tab === "contracts") renderContracts();
+    else if (state.tab === "support") renderSupport();
     else if (state.tab === "panel") renderPanel();
     else renderProducts();
   }
@@ -267,7 +625,12 @@
     return api("GET", "/app/me").then(function (me) {
       state.me = me;
       state.lang = /^(ru|uk|be)/.test(me.language || "") ? "ru" : "en";
-      render();
+      return api("GET", "/app/contracts").then(function (r) { state.contracts = r.contracts; }, function () { state.contracts = []; });
+    }).then(function () {
+      if (!state.deepLink) { render(); return; }
+      var id = state.deepLink; state.deepLink = null; state.tab = "contracts";
+      renderTabs(); show(h("p", { className: "dim", text: t("loading") }));
+      openContract(id, true);
     });
   }
 
