@@ -8,9 +8,14 @@
   var view = document.getElementById("view");
   var tabsEl = document.getElementById("tabs");
   var langButton = document.getElementById("lang");
-  var state = { me: null, tab: "products", lang: "ru", back: null, contracts: [], deepLink: null, deepSeen: false };
-  var deep = /[?&]contract=(LC-[A-Z0-9-]{9})/.exec(location.search);
-  if (deep) { state.deepLink = deep[1]; state.deepSeen = true; }
+  var state = { me: null, tab: "products", lang: "ru", back: null, contracts: [], deepLink: null, deepSeen: false, deepInvalid: false, expired: false };
+  // ?contract=: any case, normalised to upper case; present but not a contract code shows a notice
+  var deep = /[?&]contract=([^&#]*)/i.exec(location.search);
+  if (deep) {
+    var deepCode = deep[1].toUpperCase();
+    state.deepSeen = true;
+    if (/^LC-[2-9A-HJ-NP-Z]{4}-[2-9A-HJ-NP-Z]{4}$/.test(deepCode)) state.deepLink = deepCode; else state.deepInvalid = true;
+  }
   var swipesLocked = false;
 
   var TEXT = {
@@ -29,6 +34,7 @@
       signedDone: "Подписано. Подписанный экземпляр отправлен в чат.", alreadySigned: "Этот договор уже подписан.", notSignable: "Этот договор уже нельзя подписать.",
       notFound: "Договор не найден. Возможно, ссылка открыта с другого аккаунта Telegram.", rateLimited: "Слишком много попыток. Подожди немного и повтори.", needSignature: "Поставь подпись в поле.", needAgree: "Отметь, что прочитал(а) договор.",
       netFailed: "Не получилось. Проверь сеть и повтори.", toContracts: "К договорам",
+      badLink: "Ссылка на договор неверная", serverDown: "Сервер не ответил, попробуй позже", sigTooLong: "Подпись слишком длинная: очисти и нарисуй короче",
     },
     en: {
       products: "Products", contracts: "Contracts", support: "Support", panel: "Panel", loading: "Loading…", failed: "Could not load. Close your account and open it again.", onlyTelegram: "Your account opens from the bot in Telegram.",
@@ -44,7 +50,8 @@
       readFirst: "The contract arrived in the chat with the bot: read it before signing.", yourSignature: "Your signature", clear: "Clear", agree: "I have read contract No. {n} and sign it",
       signedDone: "Signed. The signed copy is sent to the chat.", alreadySigned: "This contract is already signed.", notSignable: "This contract can no longer be signed.",
       notFound: "Contract not found. The link may be opened from another Telegram account.", rateLimited: "Too many attempts. Wait a moment and try again.", needSignature: "Draw your signature in the box.", needAgree: "Tick that you have read the contract.",
-      netFailed: "It did not work. Check the network and try again.", toContracts: "To contracts",
+      netFailed: "It did not work. Check the network and try again.", toContracts: "Contracts",
+      badLink: "The contract link is invalid", serverDown: "The server did not respond, try again later", sigTooLong: "The signature is too long: clear it and draw a shorter one",
     },
   };
   function t(key) { return TEXT[state.lang][key]; }
@@ -60,9 +67,11 @@
     for (var i = 2; i < arguments.length; i++) if (arguments[i]) el.appendChild(arguments[i]);
     return el;
   }
-  function show() {
+  // Once the launch data has expired nothing may replace the expired screen.
+  function show() { if (!state.expired) draw(Array.prototype.slice.call(arguments)); }
+  function draw(nodes) {
     view.textContent = "";
-    for (var i = 0; i < arguments.length; i++) if (arguments[i]) view.appendChild(arguments[i]);
+    for (var i = 0; i < nodes.length; i++) if (nodes[i]) view.appendChild(nodes[i]);
     window.scrollTo(0, 0);
     // A signature pad on screen: a vertical swipe would close the app instead of drawing.
     var padShown = !!view.querySelector(".pad");
@@ -78,25 +87,47 @@
   function haptic(kind) { if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(kind); }
 
   // Launch data is valid for an hour and Telegram does not renew it while the app is open: a 401 asks to reopen it.
+  // A request that hangs for 20 s is aborted and reaches the callers as a network error.
   function api(method, path, body) {
+    var ctl = new AbortController();
+    var timer = setTimeout(function () { ctl.abort(); }, 20000);
     return fetch(API + path, {
       method: method,
       headers: { authorization: "tma " + tg.initData, "content-type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
+      signal: ctl.signal,
     }).then(function (response) {
       if (response.status === 401) {
-        show(h("p", { text: state.lang === "ru" ? "Сессия устарела. Закройте кабинет и откройте его снова." : "This session has expired. Close the app and open it again." }),
-          button(state.lang === "ru" ? "Закрыть" : "Close", function () { tg.close(); }));
-        throw new Error("expired");
+        // The owner's changes need a session under 15 minutes old: that is not a dead session, the screen and the draft stay.
+        return response.json().catch(function () { return {}; }).then(function (data) {
+          if (data.error === "auth_expired") { var error = new Error("auth_expired"); error.code = "auth_expired"; error.status = 401; throw error; }
+          renderExpired();
+          throw new Error("expired");
+        });
       }
       return response.json().then(function (data) {
         if (!response.ok) { var error = new Error(data.error || "error"); error.code = data.error; error.field = data.field; error.status = response.status; throw error; }
         return data;
       });
-    });
+    }).then(function (data) { clearTimeout(timer); return data; }, function (e) { clearTimeout(timer); throw e; });
   }
 
-  function open(url) { if (url.indexOf("https://t.me/") === 0) tg.openTelegramLink(url); else tg.openLink(url); }
+  function renderExpired() {
+    state.expired = true;
+    setBack(null);
+    draw([h("p", { text: state.lang === "ru" ? "Сессия устарела. Закройте кабинет и откройте его снова." : "This session has expired. Close the app and open it again." }),
+      button(state.lang === "ru" ? "Закрыть" : "Close", function () { tg.close(); })]);
+  }
+
+  function authExpiredNote() {
+    return h("div", null, h("p", { className: "error", text: "Сессия устарела для изменений: закрой и снова открой приложение" }),
+      tg.close ? button("Закрыть", function () { tg.close(); }) : h("span"));
+  }
+
+  function open(url) {
+    if (!/^https:\/\//i.test(url || "")) return;
+    if (url.indexOf("https://t.me/") === 0) tg.openTelegramLink(url); else tg.openLink(url);
+  }
   function supportUrl() { return "https://t.me/" + encodeURIComponent(state.me.support.replace(/^@/, "")); }
 
   // Back: the header's own button in Telegram, for screens opened from a list.
@@ -182,14 +213,16 @@
   // Signature pad: dark blue ink on a paper-light box. Points are stored as fractions of the box's width
   // (x = px / width, y = py / width, y down), the format the Worker draws into the PDF.
 
-  function signaturePad(clearText) {
+  function signaturePad(clearText, tooLongText) {
     var canvas = h("canvas", { className: "pad-canvas" });
     var ctx = canvas.getContext("2d");
-    var strokes = [], current = null, count = 0, width = 0;
-    var el = h("div", null, h("div", { className: "pad" }, canvas, h("div", { className: "pad-line" })),
-      h("div", { className: "pad-tools" }, h("button", { type: "button", className: "link small", text: clearText, onclick: function () {
-        strokes = []; current = null; count = 0; redraw();
-      } })));
+    var strokes = [], current = null, count = 0, width = 0, over = false;
+    var hint = h("p", { className: "error", text: tooLongText }); hint.hidden = true;
+    function reset() { strokes = []; current = null; count = 0; over = false; hint.hidden = true; redraw(); }
+    // The limits are 60 strokes and 4000 points; past them the pad stops drawing and says so.
+    function overflow() { over = true; hint.hidden = false; }
+    var el = h("div", null, h("div", { className: "pad" }, canvas, h("div", { className: "pad-line" })), hint,
+      h("div", { className: "pad-tools" }, h("button", { type: "button", className: "link small", text: clearText, onclick: reset })));
     function ink() { ctx.strokeStyle = ctx.fillStyle = "#14246b"; ctx.lineWidth = 2.2; ctx.lineCap = ctx.lineJoin = "round"; }
     function redraw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -216,13 +249,14 @@
     }
     canvas.addEventListener("pointerdown", function (e) {
       e.preventDefault(); size();
-      if (strokes.length >= 60 || count >= 4000) return;
+      if (strokes.length >= 60 || count >= 4000) { overflow(); return; }
       try { canvas.setPointerCapture(e.pointerId); } catch (x) { /* the stroke still draws */ }
       current = [at(e)]; strokes.push(current); count++;
       ink(); ctx.beginPath(); ctx.arc(current[0][0] * width, current[0][1] * width, 1.1, 0, 6.2832); ctx.fill();
     });
     canvas.addEventListener("pointermove", function (e) {
-      if (!current || count >= 4000) return;
+      if (!current) return;
+      if (count >= 4000) { overflow(); return; }
       var p = at(e), last = current[current.length - 1];
       if (Math.sqrt(Math.pow((p[0] - last[0]) * width, 2) + Math.pow((p[1] - last[1]) * width, 2)) < 1.5) return;
       current.push(p); count++;
@@ -237,8 +271,9 @@
     return {
       el: el,
       strokes: function () { return strokes.map(function (s) { return s.slice(); }); },
-      clear: function () { strokes = []; current = null; count = 0; redraw(); },
-      isEmpty: function () { return count < 8; },
+      clear: reset,
+      isEmpty: function () { return strokes.length === 0 || count < 8; },
+      tooLong: function () { return over; },
     };
   }
 
@@ -269,7 +304,9 @@
     if (e.code === "rate_limited") return t("rateLimited");
     if (e.code === "already_signed") return t("alreadySigned");
     if (e.code === "not_signable") return t("notSignable");
-    if (e.field === "signature") return t("needSignature");
+    if (e.field === "signature") return t("sigTooLong");
+    if (e.status === 400) return t("badLink");
+    if (e.status >= 500) return t("serverDown");
     return t("netFailed");
   }
 
@@ -278,7 +315,11 @@
     show(h("p", { className: "dim", text: t("loading") }));
     api("GET", "/app/contracts/" + id).then(function (c) {
       if (direct && c.status === "awaiting") renderSign(c); else renderClientCard(c);
-    }).catch(function (e) { if (e.message !== "expired") show(h("p", { className: "error", text: contractError(e) })); });
+    }).catch(function (e) {
+      if (e.message === "expired") return;
+      setBack(direct ? null : renderContracts);
+      show(h("p", { className: "error", text: contractError(e) }), button(t("toContracts"), renderContracts));
+    });
   }
 
   function renderClientCard(c) {
@@ -298,13 +339,14 @@
 
   function renderSign(c) {
     setBack(function () { renderClientCard(c); });
-    var pad = signaturePad(t("clear"));
+    var pad = signaturePad(t("clear"), t("sigTooLong"));
     var box = h("input", { type: "checkbox", id: "agree" });
     var error = h("p", { className: "error" }); error.hidden = true;
     function fail(text) { haptic("error"); error.textContent = text; error.hidden = false; sign.disabled = false; }
     var sign = button(t("signAction"), function () {
       error.hidden = true;
       if (pad.isEmpty()) { fail(t("needSignature")); return; }
+      if (pad.tooLong()) { fail(t("sigTooLong")); return; }
       if (!box.checked) { fail(t("needAgree")); return; }
       sign.disabled = true;
       api("POST", "/app/contracts/" + c.id + "/sign", { agree: true, signature: pad.strokes() }).then(function () {
@@ -329,6 +371,7 @@
 
   function renderPanel() {
     setBack(null);
+    clearDraft(); // the contract draft lives only while the form is open
     var email = h("input", { id: "email", type: "email", placeholder: "buyer@example.com", autocapitalize: "none", autocomplete: "off" });
     var name = h("input", { id: "owner-name", placeholder: "Иван Петров", autocomplete: "off" });
     var result = h("div");
@@ -337,8 +380,9 @@
       api("POST", "/app/admin/licenses", { email: email.value, name: name.value }).then(function (r) {
         haptic("success"); email.value = ""; name.value = ""; create.disabled = false;
         result.appendChild(keyBlock(r.key, r.email));
-      }).catch(function () {
+      }).catch(function (e) {
         haptic("error"); create.disabled = false;
+        if (e.code === "auth_expired") { result.appendChild(authExpiredNote()); return; }
         result.appendChild(h("p", { className: "error", text: "Не создана: проверь почту." }));
       });
     }, "primary");
@@ -354,24 +398,38 @@
     loadOrders(orders);
   }
 
-  function keyBlock(key, email) {
-    var copied = h("p", { className: "note", text: "Показан один раз. Лицензия на " + email + "; отправь ключ покупателю сам." });
-    return h("div", { className: "well", style: "margin-top:12px" }, h("span", { className: "engraved", text: "Ключ" }), h("code", { className: "key", text: key }),
-      button("Скопировать", function (e) {
-        if (navigator.clipboard) navigator.clipboard.writeText(key).then(function () { e.target.textContent = "Скопирован"; });
-      }), copied);
+  // Copying can be refused (no permission, no clipboard API): the text is selected for a manual copy instead.
+  function copyText(text, node, e, done) {
+    var btn = e.target;
+    function manual() {
+      btn.textContent = "Скопируй вручную";
+      var range = document.createRange(), sel = window.getSelection();
+      range.selectNodeContents(node); sel.removeAllRanges(); sel.addRange(range);
+    }
+    if (!navigator.clipboard) { manual(); return; }
+    navigator.clipboard.writeText(text).then(function () { btn.textContent = done; }).catch(manual);
   }
 
+  function keyBlock(key, email) {
+    var copied = h("p", { className: "note", text: "Показан один раз. Лицензия на " + email + "; отправь ключ покупателю сам." });
+    var code = h("code", { className: "key", text: key });
+    return h("div", { className: "well", style: "margin-top:12px" }, h("span", { className: "engraved", text: "Ключ" }), code,
+      button("Скопировать", function (e) { copyText(key, code, e, "Скопирован"); }), copied);
+  }
+
+  var findSeq = 0;
   function find(q, into) {
+    var mine = ++findSeq;
     into.textContent = "";
     api("GET", "/app/admin/licenses?q=" + encodeURIComponent(q)).then(function (r) {
+      if (mine !== findSeq) return;
       if (!r.licenses.length) { into.appendChild(h("p", { className: "dim small", style: "margin-top:12px", text: "Ничего не найдено." })); return; }
       r.licenses.forEach(function (l) {
         into.appendChild(h("button", { type: "button", className: "list-item", onclick: function () { renderCard(l.id); } },
           document.createTextNode(l.customer_name),
           h("span", { className: l.status === "active" ? "" : "revoked", text: (l.email || "без почты") + (l.status === "active" ? "" : ", отозвана") })));
       });
-    }).catch(function () { into.appendChild(h("p", { className: "error", text: "Поиск не сработал." })); });
+    }).catch(function () { if (mine === findSeq) into.appendChild(h("p", { className: "error", text: "Поиск не сработал." })); });
   }
 
   function renderCard(id) {
@@ -379,8 +437,12 @@
     api("GET", "/app/admin/licenses?q=" + encodeURIComponent(id)).then(function (r) {
       var l = r.licenses[0];
       if (!l) { show(h("p", { text: "Лицензия не найдена." })); return; }
+      var out = h("div");
       function act(action, done) {
-        return api("POST", "/app/admin/licenses/" + id + "/" + action).then(function () { haptic("success"); done && done(); renderCard(id); }).catch(function () { haptic("error"); });
+        return api("POST", "/app/admin/licenses/" + id + "/" + action).then(function () { haptic("success"); done && done(); renderCard(id); }).catch(function (e) {
+          haptic("error");
+          if (e.code === "auth_expired") { out.textContent = ""; out.appendChild(authExpiredNote()); }
+        });
       }
       var revoke = l.status === "active"
         ? button("Отозвать", function () { tg.showConfirm("Отозвать лицензию? Новая активация сразу перестанет работать, установленный плагин отключится при следующем обновлении токена.", function (yes) { if (yes) act("revoke"); }); }, "danger")
@@ -389,7 +451,7 @@
           h("div", { className: "status" + (l.status === "active" ? "" : " revoked"), text: l.status === "active" ? "Активна" : "Отозвана" })),
         row("Имя", l.customer_name), row("Почта", l.email || "нет"), row("Компьютеры", l.activations + "/" + l.max_machines), row("Создана", date(l.created_at)),
         h("p", { className: "mono", style: "margin-top:12px", text: l.id }),
-        button("Отвязать компьютеры", function () { act("reset"); }), revoke);
+        button("Отвязать компьютеры", function () { act("reset"); }), revoke, out);
     }).catch(function () { show(h("p", { className: "error", text: "Не удалось открыть." })); });
   }
 
@@ -405,7 +467,10 @@
           var input = h("input", { inputmode: "numeric", placeholder: "Telegram ID покупателя", style: "margin-top:12px" });
           into.appendChild(input);
           into.appendChild(button("Назначить покупателя", function () {
-            api("POST", "/app/admin/orders/" + o.purchase_id + "/assign", { telegram_id: Number(input.value) }).then(function () { haptic("success"); loadOrders(into); }).catch(function () { haptic("error"); });
+            api("POST", "/app/admin/orders/" + o.purchase_id + "/assign", { telegram_id: Number(input.value) }).then(function () { haptic("success"); loadOrders(into); }).catch(function (e) {
+              haptic("error");
+              if (e.code === "auth_expired") into.appendChild(authExpiredNote());
+            });
           }));
         }
       });
@@ -435,23 +500,25 @@
     catch (e) { return new Date().toISOString().slice(0, 10); }
   }
 
-  function copyButton(text) {
-    return button("Скопировать ссылку", function (e) {
-      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { e.target.textContent = "Скопирована"; });
-    });
+  function copyButton(text, node) {
+    return button("Скопировать ссылку", function (e) { copyText(text, node, e, "Скопирована"); });
   }
   function shareButton(link) {
     return button("Отправить клиенту", function () { tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(link)); });
   }
   function linkBlock(link) {
-    return h("div", { style: "margin-top:12px" }, h("p", { className: "mono", text: link }), copyButton(link), shareButton(link));
+    var shown = h("p", { className: "mono", text: link });
+    return h("div", { style: "margin-top:12px" }, shown, copyButton(link, shown), shareButton(link));
   }
 
   function contractsSection() {
     var found = h("div");
     var query = h("input", { placeholder: "Номер, бит, клиент или код", autocomplete: "off" });
+    var seq = 0;
     function load() {
+      var mine = ++seq;
       api("GET", "/app/admin/contracts?q=" + encodeURIComponent(query.value)).then(function (r) {
+        if (mine !== seq) return;
         found.textContent = "";
         if (!r.contracts.length) { found.appendChild(h("p", { className: "dim small", style: "margin-top:12px", text: "Договоров нет." })); return; }
         r.contracts.forEach(function (c) {
@@ -460,7 +527,7 @@
             h("span", { className: c.status === "signed" || c.status === "awaiting" ? "" : "revoked",
               text: c.licensee_short + (c.client_username ? " @" + c.client_username : "") + " · " + c.amount + " грн · " + STATUS_RU[c.status] })));
         });
-      }).catch(function () { found.textContent = ""; found.appendChild(h("p", { className: "error", text: "Договоры не загрузились." })); });
+      }).catch(function () { if (mine !== seq) return; found.textContent = ""; found.appendChild(h("p", { className: "error", text: "Договоры не загрузились." })); });
     }
     query.addEventListener("input", debounce(load, 300));
     load();
@@ -474,7 +541,10 @@
       var c = r.contracts.filter(function (x) { return x.id === id; })[0];
       if (!c) { show(h("p", { text: "Договор не найден." })); return; }
       var out = h("div");
-      function say(text, bad) { out.textContent = ""; out.appendChild(h("p", { className: bad ? "error" : "note", text: text })); }
+      function say(text, bad, e) {
+        out.textContent = "";
+        out.appendChild(e && e.code === "auth_expired" ? authExpiredNote() : h("p", { className: bad ? "error" : "note", text: text }));
+      }
       function post(action, body) { return api("POST", "/app/admin/contracts/" + id + "/" + action, body); }
       var parts = [
         h("div", { className: "well" }, h("div", { className: "product-name", text: "№ " + c.number }),
@@ -486,18 +556,22 @@
       if (c.revoked_at) parts.push(row(c.status === "cancelled" ? "Отменён" : "Отозван", date(c.revoked_at) + (c.revoke_reason ? ", " + c.revoke_reason : "")));
       parts.push(h("p", { className: "mono", style: "margin-top:12px", text: c.id }));
       parts.push(button("Прислать PDF в чат", function () {
-        post("send").then(function () { haptic("success"); say("PDF отправлен в чат."); }).catch(function () { haptic("error"); say("Не отправлен.", true); });
+        post("send").then(function () { haptic("success"); say("PDF отправлен в чат."); }).catch(function (e) { haptic("error"); say("Не отправлен.", true, e); });
       }));
-      if (c.status === "awaiting" && !c.client_telegram_id) {
-        parts.push(button("Новая ссылка", function () {
+      if (c.status === "awaiting") {
+        function newLink() {
           post("link").then(function (l) { haptic("success"); out.textContent = ""; out.appendChild(linkBlock(l.link)); })
-            .catch(function () { haptic("error"); say("Ссылку не создать: клиент мог уже открыть договор.", true); });
+            .catch(function (e) { haptic("error"); say("Ссылку не создать.", true, e); });
+        }
+        parts.push(button("Новая ссылка", function () {
+          if (!c.client_telegram_id) { newLink(); return; }
+          tg.showConfirm("Ссылка сменится, текущий клиент отвяжется.", function (yes) { if (yes) newLink(); });
         }));
       }
       if (c.status === "awaiting") {
         parts.push(button("Отменить", function () {
           tg.showConfirm("Отменить неподписанный договор? Он останется в реестре как отменённый.", function (yes) {
-            if (yes) post("cancel").then(function () { haptic("success"); adminContractCard(id); }).catch(function () { haptic("error"); say("Не отменён.", true); });
+            if (yes) post("cancel").then(function () { haptic("success"); adminContractCard(id); }).catch(function (e) { haptic("error"); say("Не отменён.", true, e); });
           });
         }, "danger"));
       }
@@ -506,7 +580,7 @@
         parts.push(reason);
         parts.push(button("Отозвать", function () {
           tg.showConfirm("Отозвать договор? Клиент получит уведомление, на странице проверки он станет отозванным.", function (yes) {
-            if (yes) post("revoke", { reason: reason.value }).then(function () { haptic("success"); adminContractCard(id); }).catch(function () { haptic("error"); say("Не отозван.", true); });
+            if (yes) post("revoke", { reason: reason.value }).then(function () { haptic("success"); adminContractCard(id); }).catch(function (e) { haptic("error"); say("Не отозван.", true, e); });
           });
         }, "danger"));
       }
@@ -515,8 +589,21 @@
     }).catch(function () { show(h("p", { className: "error", text: "Не удалось открыть." })); });
   }
 
+  function clearDraft() { try { sessionStorage.removeItem("contractDraft"); } catch (e) { /* nothing to clear */ } }
+
+  // One id per rendered form: a retry after a lost answer sends the same id, so the Worker returns the contract it already made.
+  function newRequestId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    var b = new Uint8Array(16);
+    crypto.getRandomValues(b);
+    b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+    var x = Array.prototype.map.call(b, function (v) { return ("0" + v.toString(16)).slice(-2); }).join("");
+    return x.slice(0, 8) + "-" + x.slice(8, 12) + "-" + x.slice(12, 16) + "-" + x.slice(16, 20) + "-" + x.slice(20);
+  }
+
   function renderContractForm() {
     setBack(renderPanel);
+    var requestId = newRequestId();
     var draft = {};
     try { draft = JSON.parse(sessionStorage.getItem("contractDraft") || "{}") || {}; } catch (e) { draft = {}; }
     var template = draft.template === "L-RU" ? "L-RU" : "L-UA";
@@ -540,8 +627,11 @@
 
     var beatQuery = h("input", { placeholder: "Поиск по названию", autocomplete: "off", id: "cf-beat-search" });
     var beatList = h("div");
+    var beatSeq = 0;
     function searchBeats() {
+      var mine = ++beatSeq;
       api("GET", "/app/admin/beats?q=" + encodeURIComponent(beatQuery.value)).then(function (r) {
+        if (mine !== beatSeq) return;
         beatList.textContent = "";
         r.beats.forEach(function (b) {
           var meta = [b.bpm ? b.bpm + " BPM" : "", b.musical_key || ""].filter(Boolean).join(" ");
@@ -551,7 +641,7 @@
             saveDraft();
           } }, document.createTextNode(b.name + (meta ? " · " + meta : ""))));
         });
-      }).catch(function () { beatList.textContent = ""; beatList.appendChild(h("p", { className: "error", text: "Поиск не сработал." })); });
+      }).catch(function () { if (mine !== beatSeq) return; beatList.textContent = ""; beatList.appendChild(h("p", { className: "error", text: "Поиск не сработал." })); });
     }
     beatQuery.addEventListener("input", debounce(searchBeats, 300));
 
@@ -569,26 +659,47 @@
     });
     inputs.beat_name.addEventListener("input", function () { beatId = null; saveDraft(); });
 
-    var pad = signaturePad("Очистить");
+    var pad = signaturePad("Очистить", TEXT.ru.sigTooLong);
     var error = h("p", { className: "error" }); error.hidden = true;
     function fail(text) { haptic("error"); error.textContent = text; error.hidden = false; create.disabled = false; }
     var create = button("Создать и подписать", function () {
       error.hidden = true;
       if (pad.isEmpty()) { fail("Поставь подпись в поле."); return; }
-      var body = { template: template, signature: pad.strokes() };
+      if (pad.tooLong()) { fail(TEXT.ru.sigTooLong); return; }
+      var body = { template: template, signature: pad.strokes(), request_id: requestId };
       if (beatId !== null) body.beat_message_id = beatId;
       FORM_FIELDS.forEach(function (f) { body[f[0]] = inputs[f[0]].value.trim(); });
       body.amount_num = body.amount_num.replace(/\s/g, "");
       create.disabled = true;
       api("POST", "/app/admin/contracts", body).then(function (r) {
         haptic("success");
-        try { sessionStorage.removeItem("contractDraft"); } catch (e) { /* nothing to clear */ }
-        show(h("h2", { text: "Договор создан" }), row("Номер", r.number), row("Код", r.id),
-          h("p", { className: "dim small", style: "margin-top:12px", text: "Ссылка для подписи клиента, одноразовая:" }), linkBlock(r.link),
-          button("К договорам", renderPanel));
+        clearDraft(); requestId = newRequestId();
+        var linkArea = h("div");
+        if (r.link) {
+          linkArea.appendChild(h("p", { className: "dim small", style: "margin-top:12px", text: "Ссылка для подписи клиента, одноразовая:" }));
+          linkArea.appendChild(linkBlock(r.link));
+        } else {
+          var again = h("div");
+          again.appendChild(h("p", { className: "note", style: "margin-top:12px", text: "Договор уже был создан. Ссылка не сохраняется — создай новую." }));
+          again.appendChild(button("Новая ссылка", function () {
+            api("POST", "/app/admin/contracts/" + r.id + "/link").then(function (l) {
+              haptic("success"); linkArea.textContent = "";
+              linkArea.appendChild(h("p", { className: "dim small", style: "margin-top:12px", text: "Ссылка для подписи клиента, одноразовая:" }));
+              linkArea.appendChild(linkBlock(l.link));
+            }).catch(function (e2) {
+              haptic("error");
+              if (e2.message === "expired") return;
+              again.appendChild(e2.code === "auth_expired" ? authExpiredNote() : h("p", { className: "error", text: "Ссылку не создать." }));
+            });
+          }));
+          linkArea.appendChild(again);
+        }
+        show(h("h2", { text: "Договор создан" }), row("Номер", r.number), row("Код", r.id), linkArea, button("К договорам", renderPanel));
       }).catch(function (e) {
         if (e.message === "expired") return;
-        fail(e.code === "bad_request" ? "Проверь поле: " + (FIELD_LABELS[e.field] || e.field || "?") + "." : "Не создан. Проверь сеть и повтори.");
+        if (e.code === "auth_expired") { haptic("error"); create.disabled = false; error.textContent = ""; error.appendChild(authExpiredNote()); error.hidden = false; return; }
+        fail(e.code === "bad_request" && e.field === "signature" ? TEXT.ru.sigTooLong :
+          e.code === "bad_request" ? "Проверь поле: " + (FIELD_LABELS[e.field] || e.field || "?") + "." : "Не создан. Проверь сеть и повтори.");
       });
     }, "primary");
     parts.push(h("h2", { text: "Твоя подпись" }), pad.el, create, error);
@@ -606,7 +717,7 @@
     tabs.push("support");
     if (state.me && state.me.is_owner) tabs.push("panel");
     tabs.forEach(function (id) {
-      tabsEl.appendChild(h("button", { type: "button", role: "tab", "aria-selected": String(state.tab === id), text: t(id), onclick: function () { state.tab = id; render(); } }));
+      tabsEl.appendChild(h("button", { type: "button", role: "tab", "aria-selected": String(state.tab === id), text: t(id), onclick: function () { if (state.expired) return; state.tab = id; render(); } }));
     });
     langButton.textContent = state.lang === "ru" ? "English" : "Русский";
     document.documentElement.lang = state.lang;
@@ -614,7 +725,9 @@
 
   function render() {
     renderTabs();
+    if (state.expired) { renderExpired(); return; }
     if (!state.me) return;
+    clearDraft();
     if (state.tab === "contracts") renderContracts();
     else if (state.tab === "support") renderSupport();
     else if (state.tab === "panel") renderPanel();
@@ -627,6 +740,11 @@
       state.lang = /^(ru|uk|be)/.test(me.language || "") ? "ru" : "en";
       return api("GET", "/app/contracts").then(function (r) { state.contracts = r.contracts; }, function () { state.contracts = []; });
     }).then(function () {
+      if (state.deepInvalid) {
+        state.deepInvalid = false; state.tab = "contracts"; renderTabs();
+        show(h("p", { className: "error", text: t("badLink") }), button(t("toContracts"), renderContracts));
+        return;
+      }
       if (!state.deepLink) { render(); return; }
       var id = state.deepLink; state.deepLink = null; state.tab = "contracts";
       renderTabs(); show(h("p", { className: "dim", text: t("loading") }));
