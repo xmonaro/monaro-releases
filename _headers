@@ -9,7 +9,7 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=(), browsing-topics=()
   Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self' https://license.monaro.workers.dev https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' https://license.monaro.workers.dev; font-src 'self'; connect-src 'self' https://license.monaro.workers.dev https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
   Speculation-Rules: "/speculation-rules.json"
 
 # The Telegram Mini App: Telegram's script, the license Worker, and framing by Telegram's web client.
