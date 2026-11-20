@@ -20,10 +20,10 @@
 
   var TEXT = {
     ru: {
-      products: "Продукты", contracts: "Договоры", support: "Поддержка", panel: "Панель", loading: "Загрузка…", failed: "Не удалось загрузить. Закройте и откройте кабинет ещё раз.", onlyTelegram: "Кабинет открывается из бота в Telegram.",
+      products: "Продукты", contracts: "Договоры", support: "Поддержка", panel: "Панель", loading: "Загрузка…", failed: "Не удалось загрузить. Закройте и откройте приложение ещё раз.", onlyTelegram: "Приложение открывается из бота в Telegram.",
       active: "Лицензия активна, навсегда", revoked: "Лицензия отозвана", licensedTo: "Лицензия на имя", change: "Изменить", computers: "Компьютеры", none: "Не активирована", since: "Куплена", installer: "Установщик и руководство",
       installNote: "Если система блокирует установщик. macOS: Системные настройки > Конфиденциальность и безопасность > «Всё равно открыть». Windows: в окне SmartScreen «Подробнее» > «Выполнить в любом случае».",
-      keyNote: "Ключ показывается один раз: он в сообщении с покупкой в чате с ботом. Потерял, напишите в поддержку.",
+      keyNote: "Ключ показывается один раз, в сообщении о покупке в чате с ботом. Если ключ потерян, напишите в поддержку.",
       empty: "На этом аккаунте пока нет продуктов. Ключ придёт в чат с ботом сразу после оплаты.", buy: "Купить", haveKey: "Уже есть ключ", keyLabel: "Ключ лицензии", add: "Добавить", badKey: "Такой ключ не подходит. Если он точно верный, напишите в поддержку.",
       nameLabel: "Имя в плагине", nameNote: "Плагин покажет новое имя при следующем обновлении лицензии.", save: "Сохранить", cancel: "Отмена", saveFailed: "Не удалось сохранить.",
       questions: "Вопросы по покупке, ключу или активации", write: "Написать в поддержку", bug: "Что-то работает неправильно", bugText: "Бот попросит описание в чате. Туда же можно приложить скриншот, видео или аудио.", report: "Сообщить об ошибке", reportFailed: "Сначала нажмите Start в чате с ботом.",
@@ -115,7 +115,7 @@
   function renderExpired() {
     state.expired = true;
     setBack(null);
-    draw([h("p", { text: state.lang === "ru" ? "Сессия устарела. Закройте кабинет и откройте его снова." : "This session has expired. Close the app and open it again." }),
+    draw([h("p", { text: state.lang === "ru" ? "Сессия устарела. Закройте приложение и откройте его снова." : "This session has expired. Close the app and open it again." }),
       button(state.lang === "ru" ? "Закрыть" : "Close", function () { tg.close(); })]);
   }
 
@@ -758,13 +758,12 @@
     api("POST", "/app/language", { language: state.lang }).catch(function () { haptic("error"); });
   });
 
+  // Always the site's dark room, whatever Telegram's colour scheme (app.css).
   function applyTheme() {
-    var chalk = tg.colorScheme === "light";
-    document.documentElement.dataset.theme = chalk ? "chalk" : "graphite";
-    var chassis = chalk ? "#e2e4e6" : "#232527";
-    tg.setHeaderColor(chassis);
-    tg.setBackgroundColor(chassis);
-    if (tg.setBottomBarColor) tg.setBottomBarColor(chassis);
+    var ground = "#0d0c10";
+    tg.setHeaderColor(ground);
+    tg.setBackgroundColor(ground);
+    if (tg.setBottomBarColor) tg.setBottomBarColor(ground);
   }
 
   if (!tg || !tg.initData) {

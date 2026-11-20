@@ -1,92 +1,85 @@
-/* The cabinet in Telegram, in the plugin's visual language (docs/ui/style-guide.md in the Surface repo):
-   matte chassis, graphite windows with a lit lip, Archivo in three cuts, thin rules, neutral controls.
-   Graphite and Chalk follow Telegram's colour scheme. */
-@font-face { font-family: "Archivo"; src: url("../fonts/Archivo-Regular.ttf"); font-display: swap; }
-@font-face { font-family: "Archivo SemiExpanded"; src: url("../fonts/Archivo-SemiExpandedMedium.ttf"); font-display: swap; }
-@font-face { font-family: "Archivo Expanded"; src: url("../fonts/Archivo-ExpandedMedium.ttf"); font-display: swap; }
+/* The Telegram Mini App in the MONARO LAB look (DESIGN_RULES.md): the dark of the room, near-white ink,
+   violet as light (lines, the current tab, the live thing), Archivo, hairlines instead of boxes. Always dark,
+   like the site, whatever Telegram's colour scheme. */
+@font-face { font-family: "Archivo"; src: url("../fonts/Archivo-Variable.ttf") format("truetype"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
 
 :root {
-  --chassis: #232527; --plate: #2b2d30; --raised: #35383b; --seam: #17181a; --lit: rgba(255,255,255,.05);
-  --text: #e4e6e8; --dim: #a4a8ad; --faint: #797d83;
-  --well: #18191b; --well-text: #e4e6e8; --well-dim: #a4a8ad; --well-lip: rgba(255,255,255,.06);
-  --danger: #d9694f; --ok: #35977a;
-}
-:root[data-theme="chalk"] {
-  --chassis: #e2e4e6; --plate: #eceef0; --raised: #f6f7f8; --seam: #c6c9cd; --lit: rgba(255,255,255,.7);
-  --text: #1d1e20; --dim: #4c5056; --faint: #6a6e74;
-  --well: #2b2c2e; --well-text: #eceef0; --well-dim: #aeb2b7; --well-lip: rgba(255,255,255,.75);
-  --danger: #b5432b; --ok: #24785f;
+  --ground: #0d0c10; --ground-2: #17151c; --ink: #efedf3; --muted: #b3aebd; --faint: #8a8594;
+  --violet: #9b5cff; --violet-ink: #c4a3ff; --button: #efedf3; --button-ink: #121013;
+  --rule: rgba(255,255,255,.14); --rule-soft: rgba(255,255,255,.08);
+  --danger: #e0867a; --ok: #9b5cff;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; color-scheme: dark; }
 body {
   margin: 0; padding: 0 16px calc(32px + env(safe-area-inset-bottom));
-  background: var(--chassis); color: var(--text);
-  font: 15px/1.45 "Archivo", system-ui, sans-serif; overflow-x: hidden;
+  background: var(--ground); color: var(--ink);
+  font: 400 16px/1.5 "Archivo", system-ui, sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased;
 }
 .head { display: flex; align-items: center; justify-content: space-between; height: 56px; }
-.wordmark { font: 16px "Archivo Expanded", "Archivo", sans-serif; letter-spacing: .27em; }
-.engraved, .lang, .tabs button, .button, label {
-  font: 11px "Archivo SemiExpanded", "Archivo", sans-serif; letter-spacing: .14em; text-transform: uppercase;
-}
-.lang { background: none; border: 0; color: var(--dim); padding: 12px 0 12px 16px; cursor: pointer; }
+.wordmark { font-weight: 600; font-stretch: 125%; letter-spacing: .02em; font-size: 16px; }
+.lang { background: none; border: 0; color: var(--muted); padding: 12px 0 12px 16px; cursor: pointer; font: 500 13px "Archivo", sans-serif; letter-spacing: .06em; }
+.engraved { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
-.tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--seam); box-shadow: 0 1px 0 var(--lit); }
-.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 12px 0; color: var(--faint); cursor: pointer; }
-.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--text); }
+/* tabs as on the site account: muted labels, the current one in ink over a violet line */
+.tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--rule); overflow-x: auto; scrollbar-width: none; }
+.tabs button { background: none; border: 0; padding: 12px 0; color: var(--muted); cursor: pointer; font: 400 15px "Archivo", sans-serif; white-space: nowrap; }
+.tabs button[aria-selected="true"] { color: var(--ink); box-shadow: inset 0 -1px 0 var(--violet); }
 
 main { padding-top: 24px; }
-h2 { margin: 32px 0 12px; font: 11px "Archivo SemiExpanded", "Archivo", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+h2 { margin: 32px 0 12px; font-size: 18px; font-weight: 650; line-height: 1.25; color: var(--ink); }
 h2:first-child { margin-top: 0; }
 p { margin: 0 0 12px; }
-.dim { color: var(--dim); }
-.small { font-size: 13px; }
+.dim { color: var(--muted); }
+.small { font-size: 14px; }
 
-.well {
-  background: var(--well); color: var(--well-text); border-radius: 8px; padding: 16px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,.35), 0 1px 0 var(--well-lip);
-}
-.product-name { font: 15px "Archivo Expanded", "Archivo", sans-serif; letter-spacing: .27em; text-transform: uppercase; }
-.status { display: flex; align-items: center; gap: 8px; margin-top: 12px; color: var(--well-dim); font-size: 14px; }
-.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
-.status.revoked::before { background: var(--danger); }
+/* a product or contract block: a tonal panel with a violet top line, no rounded box */
+.well { background: var(--ground-2); color: var(--ink); padding: 16px; border-top: 1px solid var(--violet); }
+.product-name { font-weight: 650; font-stretch: 125%; letter-spacing: .04em; text-transform: uppercase; font-size: 15px; }
+.status { display: flex; align-items: center; gap: 8px; margin-top: 12px; color: var(--muted); font-size: 14px; }
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px rgba(155,92,255,.7); }
+.status.revoked::before { background: var(--danger); box-shadow: none; }
 
-.row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--seam); box-shadow: 0 1px 0 var(--lit); align-items: baseline; }
-.row > :first-child { color: var(--dim); flex: none; }
+.row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule-soft); align-items: baseline; }
+.row > :first-child { color: var(--muted); flex: none; }
 .row > :last-child { text-align: right; min-width: 0; overflow-wrap: anywhere; }
-.link { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; cursor: pointer; text-align: inherit; }
+.link { background: none; border: 0; padding: 0; color: var(--violet-ink); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; cursor: pointer; text-align: inherit; }
 
+/* buttons as on the site: square, the main one near-white, the others outlined */
 .button {
-  display: block; width: 100%; min-height: 44px; margin-top: 12px; padding: 12px 16px; text-align: center;
-  background: var(--raised); color: var(--text); border: 1px solid var(--seam); border-radius: 4px; box-shadow: inset 0 1px 0 var(--lit); cursor: pointer;
+  display: block; width: 100%; min-height: 48px; margin-top: 12px; padding: 12px 16px; text-align: center;
+  background: none; color: var(--ink); border: 0; border-radius: 0; box-shadow: inset 0 0 0 1px var(--rule);
+  font: 600 15px "Archivo", sans-serif; cursor: pointer;
 }
-.button:active { background: var(--plate); }
+.button:active { background: rgba(255,255,255,.06); }
 .button:disabled { color: var(--faint); cursor: default; }
-.button.primary { background: var(--text); color: var(--chassis); border-color: var(--text); box-shadow: none; }
+.button.primary { background: var(--button); color: var(--button-ink); box-shadow: none; }
+.button.primary:active { background: #fff; }
+.button.primary:disabled { opacity: .4; color: var(--button-ink); }
 .button.danger { color: var(--danger); }
 .buttons { display: flex; gap: 8px; }
 .buttons .button { flex: 1; min-width: 0; padding-left: 8px; padding-right: 8px; }
 
-label { display: block; margin: 16px 0 8px; color: var(--dim); }
+/* fields: underline only, the line turns violet on focus */
+label { display: block; margin: 20px 0 4px; color: var(--muted); font-size: 14px; }
 input {
-  width: 100%; min-height: 44px; padding: 10px 12px; font: 16px "Archivo", sans-serif;
-  background: var(--well); color: var(--well-text); border: 0; border-radius: 4px; outline: 0;
-  box-shadow: inset 0 2px 3px rgba(0,0,0,.35), 0 1px 0 var(--well-lip);
+  width: 100%; min-height: 44px; padding: 8px 2px; font: 16px "Archivo", sans-serif;
+  background: none; color: var(--ink); border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; outline: 0;
 }
-input:focus { box-shadow: inset 0 0 0 1px var(--well-dim); }
-input::placeholder { color: var(--well-dim); opacity: .7; }
+input:focus { border-bottom-color: var(--violet); }
+input::placeholder { color: var(--faint); }
 
-.key { display: block; margin: 8px 0 12px; font: 17px "Archivo", sans-serif; letter-spacing: .06em; user-select: all; -webkit-user-select: all; }
-.note { margin-top: 12px; font-size: 13px; color: var(--dim); }
+.key { display: block; margin: 8px 0 12px; font: 500 17px "Archivo", sans-serif; letter-spacing: .06em; user-select: all; -webkit-user-select: all; }
+.note { margin-top: 12px; font-size: 14px; color: var(--muted); }
 .error { margin-top: 12px; font-size: 14px; color: var(--danger); }
-.list-item { display: block; width: 100%; padding: 12px 0; background: none; border: 0; border-bottom: 1px solid var(--seam); box-shadow: 0 1px 0 var(--lit); color: var(--text); font: inherit; text-align: left; cursor: pointer; }
-.list-item span { display: block; color: var(--dim); font-size: 13px; overflow-wrap: anywhere; }
+.list-item { display: block; width: 100%; padding: 14px 0; background: none; border: 0; border-bottom: 1px solid var(--rule-soft); color: var(--ink); font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+.list-item span { display: block; color: var(--muted); font-size: 14px; font-weight: 400; overflow-wrap: anywhere; }
 .list-item .revoked { color: var(--danger); }
-.mono { font-size: 12px; color: var(--dim); overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; }
+.mono { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; }
 
-.pad { position: relative; background: #f3f1ea; border-radius: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,.25); }
+.pad { position: relative; background: #f3f1ea; }
 .pad-canvas { display: block; width: 100%; aspect-ratio: 3 / 1; touch-action: none; cursor: crosshair; }
 .pad-line { position: absolute; left: 6%; right: 6%; top: 72%; border-top: 1px solid rgba(20,36,107,.25); pointer-events: none; }
-.pad-tools { text-align: right; margin-top: 8px; color: var(--dim); }
-label.check { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0 0; font: 15px/1.45 "Archivo", system-ui, sans-serif; letter-spacing: 0; text-transform: none; color: var(--text); }
-label.check input { width: 22px; min-height: 22px; height: 22px; flex: none; margin: 1px 0 0; }
+.pad-tools { text-align: right; margin-top: 8px; color: var(--muted); }
+label.check { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0 0; font: 15px/1.45 "Archivo", system-ui, sans-serif; color: var(--ink); }
+label.check input { width: 20px; min-height: 20px; height: 20px; flex: none; margin: 2px 0 0; padding: 0; border: 0; accent-color: var(--violet); }
