@@ -19,29 +19,31 @@
   ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors https://web.telegram.org https://*.telegram.org
 
-# Checkout (all three languages): Paddle.js and Paddle's payment frame. Framing of this page stays denied.
+# Checkout (all three languages): Paddle.js and Paddle's payment frame, supabase-js (self-hosted) for the sign-in the Worker
+# checkout needs, and the Worker. Framing of this page stays denied.
 /checkout/*
   ! Content-Security-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev https://habuhrncecutvdhshqme.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
 /en/checkout/*
   ! Content-Security-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev https://habuhrncecutvdhshqme.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
 /ua/checkout/*
   ! Content-Security-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https:; font-src 'self' https://*.paddle.com; media-src 'self'; frame-src https://*.paddle.com; connect-src 'self' https://*.paddle.com https://license.monaro.workers.dev https://habuhrncecutvdhshqme.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self' https://*.paddle.com; frame-ancestors 'none'; upgrade-insecure-requests
 
 
-# Account pages (all three languages): supabase-js (pinned, SRI, self-hosted in assets/vendor), Supabase Auth and the Worker.
+# Account pages (all three languages): supabase-js (pinned, SRI, self-hosted in assets/vendor), Supabase Auth and the Worker
+# (also the cover pictures of bought beats).
 # No analytics here.
 /account/*
   ! Content-Security-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://license.monaro.workers.dev; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 /en/account/*
   ! Content-Security-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://license.monaro.workers.dev; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 /ua/account/*
   ! Content-Security-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://license.monaro.workers.dev; font-src 'self'; connect-src 'self' https://habuhrncecutvdhshqme.supabase.co https://license.monaro.workers.dev; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
 # The pages to fetch ahead when a link is hovered (Chrome); read by the header above.
 /speculation-rules.json
